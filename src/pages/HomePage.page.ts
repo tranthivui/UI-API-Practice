@@ -4,15 +4,13 @@ import { env } from 'node:process';
 
 export class HomePage {
     readonly page;
-    readonly loginHead: Locator;
+    readonly loginInUser: Locator;
     readonly logoutLink: Locator;
-    readonly loginForm: Locator;
 
     constructor(page: Page) {
         this.page = page;
-        this.loginHead = this.page.getByText(" Logged in as");
+        this.loginInUser = this.page.getByText(" Logged in as");
         this.logoutLink = this.page.getByRole("link", { name: "Logout" });
-        this.loginForm = this.page.locator(".login-form");
     }
 
     async clickLogout() {

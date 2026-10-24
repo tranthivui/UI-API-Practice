@@ -1,8 +1,6 @@
 import { Page, test as base } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage.page";
 import { HomePage } from "../pages/HomePage.page";
-import dotenv from "dotenv"
-import { env } from 'node:process';
 
 type PageFixture = {
     loginPage: LoginPage;

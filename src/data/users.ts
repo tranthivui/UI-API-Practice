@@ -1,10 +1,10 @@
 import { ENV } from "../config/env";
 
 export type User={
-    username: string,
+    email: string,
     password: string
 };
 
 export const listUser={
-    invalidPass: {username: ENV.userEmail,password: "Mk135790"}
+    invalidPass: {email: ENV.userEmail,password: "UJ25631464"}
 } satisfies Record<string,User>

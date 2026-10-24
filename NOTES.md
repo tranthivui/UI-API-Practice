@@ -1,4 +1,4 @@
-# 1. Singup
+# 1. SIGNUP
 - email: lưu trong .env
 - password: lưu trong .env
 - display name: lưu trong .env

@@ -1,1 +1,1 @@
-export const LOGIN_URL="/api/verifyLogin"
+export const VERIFY_LOGIN_API="/api/verifyLogin"
