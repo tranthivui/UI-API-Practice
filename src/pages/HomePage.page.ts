@@ -1,6 +1,4 @@
 import { Locator, Page } from "@playwright/test";
-import dotenv from "dotenv"
-import { env } from 'node:process';
 
 export class HomePage {
     readonly page;

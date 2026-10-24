@@ -13,7 +13,7 @@ const data = {
 }
 
 test.describe("Verify login API", async () => {
-  test("Verify login API: Correct user", async ({ request }) => {
+  test("AE01-04: Verify login API: Correct user", async ({ request }) => {
     const loginRes = await request.post(VERIFY_LOGIN_API, {
       form: {
         email: ENV.userEmail,
@@ -26,7 +26,7 @@ test.describe("Verify login API", async () => {
     expect(loginResData.message).toBe(data.loginSuccess)
   });
 
-  test("Verify login API: Incorrect password", async ({ request }) => {
+  test("AE01-05: Verify login API: Incorrect password", async ({ request }) => {
     const loginRes = await request.post(VERIFY_LOGIN_API, {
       form: {
         email: listUser.invalidPass.email,
@@ -36,10 +36,10 @@ test.describe("Verify login API", async () => {
     expect(loginRes.status()).toBe(200);
     const loginResData: LoginResponse = await loginRes.json();
     expect(loginResData.responseCode).toBe(404);
-    expect(loginResData.message).toContain(data.loginInvalidPass);
+    expect(loginResData.message).toBe(data.loginInvalidPass);
   });
 
-  test("Verify login API: Missing email", async ({ request }) => {
+  test("AE01-06: Verify login API: Missing email", async ({ request }) => {
     const loginRes = await request.post(VERIFY_LOGIN_API, {
       form: {
         password: ENV.userPassword,
@@ -48,14 +48,14 @@ test.describe("Verify login API", async () => {
     expect(loginRes.status()).toBe(200);
     const loginResData: LoginResponse = await loginRes.json();
     expect(loginResData.responseCode).toBe(400);
-    expect(loginResData.message).toContain(data.loginMisingParam);
+    expect(loginResData.message).toBe(data.loginMisingParam);
   });
 
-  test("Verify login API: Invalid method", async ({ request }) => {
+  test("AE01-07: Verify login API: Invalid method", async ({ request }) => {
     const loginRes = await request.delete(VERIFY_LOGIN_API);
     expect(loginRes.status()).toBe(200);
     const loginResData: LoginResponse = await loginRes.json();
     expect(loginResData.responseCode).toBe(405);
-    expect(loginResData.message).toContain(data.loginInvalidMethod);
+    expect(loginResData.message).toBe(data.loginInvalidMethod);
   })
 })

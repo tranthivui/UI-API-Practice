@@ -2,8 +2,6 @@ import { expect } from '@playwright/test';
 import { test } from "../../src/fixtures/PageFixture.fixture"
 import { ENV } from '../../src/config/env';
 import { listUser } from '../../src/data/users';
-import { LoginResponse } from '../../src/data/response';
-
 const data = {
   incorrectPassMess: "Your email or password is incorrect!"
 }
