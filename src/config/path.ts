@@ -1,1 +1,0 @@
-export const VERIFY_LOGIN_API="/api/verifyLogin"

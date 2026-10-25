@@ -1,4 +1,5 @@
-export type LoginResponse={
+export type ApiMessageResponse={
     responseCode: number;
     message: string
 }
+

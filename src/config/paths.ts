@@ -1,0 +1,5 @@
+export const VERIFY_LOGIN_API="/api/verifyLogin"
+export const CREATE_USER_API="/api/createAccount"
+export const GET_USER_DETAIL_API="api/getUserDetailByEmail"
+export const UPDATE_USER_API="/api/updateAccount"
+export const DELETE_USER_API="/api/deleteAccount"
