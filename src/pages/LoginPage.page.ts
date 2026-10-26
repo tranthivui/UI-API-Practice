@@ -2,7 +2,7 @@ import { Locator, Page } from "@playwright/test";
 
 export class LoginPage {
     readonly url = "/login";
-    readonly page;
+    readonly page:Page;
     readonly email: Locator;
     readonly password: Locator;
     readonly loginBtn: Locator;

@@ -31,7 +31,7 @@ test.describe("Verify login UI", () => {
       await expect(homePage.loggedInUser).not.toBeVisible();
     });
   });
-  test("AE01-03: Login out success", async ({ loginPage, homePage }) => {
+  test("AE01-03: Log out success", async ({ loginPage, homePage }) => {
     await test.step("Fill login info", async () => {
       await loginPage.goto();
       await loginPage.login(ENV.userEmail, ENV.userPassword);

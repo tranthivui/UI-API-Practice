@@ -3,7 +3,7 @@ import { test } from "../../src/fixtures/PageFixture.fixture"
 import { ENV } from '../../src/config/env';
 import { listUser } from '../../src/data/users';
 import { VERIFY_LOGIN_API } from '../../src/config/paths';
-import { ApiMessageResponse } from '../../src/data/response';
+import { ApiMessageResponse } from '../../src/types/response';
 
 const data = {
   loginSuccess: "User exists!",
