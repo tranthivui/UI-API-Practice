@@ -1,5 +1,5 @@
 import { ENV } from "../config/env";
-import { User } from "./types";
+import { User } from "../types/NewUser";
 
 
 export const listUser = {

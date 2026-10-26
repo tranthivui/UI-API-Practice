@@ -1,5 +1,5 @@
 import { APIRequestContext, APIResponse } from "@playwright/test";
-import { NewUser } from "../data/types";
+import { NewUser } from "../types/NewUser";
 import { CREATE_USER_API, DELETE_USER_API, GET_USER_DETAIL_API, UPDATE_USER_API, VERIFY_LOGIN_API } from "../config/paths";
 
 export class AccountApi {
