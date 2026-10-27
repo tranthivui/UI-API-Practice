@@ -119,3 +119,8 @@ Email Address already exist!
 
 # 5.2 Delete
 Click Delete -> Show (Account Deleted!, Continue(button))
+
+# 6: NOTE
+- Test pass nhưng không chứng minh được API update thật sự hoạt động vì data cũ và data update trùng nhau -> Khi verify 2 data giống nhau sẽ pass, nhưng không có thông tin nào được thay đổi -> Không chứng minh được API update thật sự hoạt động
+
+- Các test cần tạo mới User sẽ bị fail do dùng email đã đăng ký.  -> Cần phải sử dụng UUID để tạo random email -> Đăng ký tài khoản pass -> Các test không bị fail

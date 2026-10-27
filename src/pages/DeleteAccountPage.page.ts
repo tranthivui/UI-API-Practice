@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright";
+import { Locator, Page } from "@playwright/test";
 
 export class DeleteAccountPage{
     readonly url="/delete_account";

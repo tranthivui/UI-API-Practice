@@ -22,7 +22,7 @@ test.describe("Verify API and UI", () => {
     test("AE02-06: Register by UI then verify by API", async ({ loginPage, signupPage, homePage, createdAccountPage, accountApi, cleanupUsers }) => {
         const user = buildUser();
         cleanupUsers.push({ email: user.email, password: user.password });
-        await test.step("Sigup on WEB", async () => {
+        await test.step("Sign up on WEB", async () => {
             await loginPage.goto();
             await loginPage.signUp(user.name, user.email);
             await signupPage.page.waitForURL(signupPage.url);
@@ -71,9 +71,9 @@ test.describe("Verify API and UI", () => {
             await deleteAccountPage.page.waitForURL(deleteAccountPage.url);
         });
         await test.step("Verify delete account success", async () => {
-            expect(deleteAccountPage.headerDelete).toHaveText(data.deleteSuccess);
+            await expect(deleteAccountPage.headerDelete).toHaveText(data.deleteSuccess);
         });
-        await test.step("Call API to get deleted acocunt", async () => {
+        await test.step("Call API to get deleted account", async () => {
             const res = await accountApi.getUserByEmail(apiUser.email);
             expect(res.status()).toBe(200);
             const resData: ApiMessageResponse = await res.json();
