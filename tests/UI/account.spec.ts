@@ -6,7 +6,7 @@ import { ApiMessageResponse } from "../../src/types/response";
 test.describe("Verify API and UI", () => {
     const data = {
         deleteSuccess: "Account Deleted!",
-        deletefailAPIMess: "Account not found!"
+        getUserNotExsitsMess: "Account not found with this email, try another email!"
     }
     test("AE02-05: Create account by API then login in WEB", async ({ apiUser, loginPage, homePage }) => {
         await test.step("Login on WEB", async () => {
@@ -22,7 +22,7 @@ test.describe("Verify API and UI", () => {
     test("AE02-06: Register by UI then verify by API", async ({ loginPage, signupPage, homePage, createdAccountPage, accountApi, cleanupUsers }) => {
         const user = buildUser();
         cleanupUsers.push({ email: user.email, password: user.password });
-        await test.step("Login on WEB", async () => {
+        await test.step("Sigup on WEB", async () => {
             await loginPage.goto();
             await loginPage.signUp(user.name, user.email);
             await signupPage.page.waitForURL(signupPage.url);
@@ -73,12 +73,12 @@ test.describe("Verify API and UI", () => {
         await test.step("Verify delete account success", async () => {
             expect(deleteAccountPage.headerDelete).toHaveText(data.deleteSuccess);
         });
-        await test.step("Call API to delete account again", async () => {
-            const res = await accountApi.deleteUser(apiUser.email, apiUser.password);
+        await test.step("Call API to get deleted acocunt", async () => {
+            const res = await accountApi.getUserByEmail(apiUser.email);
             expect(res.status()).toBe(200);
             const resData: ApiMessageResponse = await res.json();
             expect(resData.responseCode).toBe(404);
-            expect(resData.message).toBe(data.deletefailAPIMess);
+            expect(resData.message).toBe(data.getUserNotExsitsMess);
         })
     })
 })

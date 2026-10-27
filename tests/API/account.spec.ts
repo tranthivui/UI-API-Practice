@@ -56,12 +56,9 @@ test.describe("Verify API account", () => {
     });
 
     test("AE02-03: Update account", async ({ accountApi, apiUser }) => {
-        await test.step("Change account info", async () => {
-            apiUser.name = "Change name";
-            apiUser.city = "New City";
-        })
+        const updateUser={...apiUser,name: "Change name",city: "New City"};
         const updateRes = await test.step("Update account", async () => {
-            const res = await accountApi.updateUser(apiUser);
+            const res = await accountApi.updateUser(updateUser);
             expect(res.status()).toBe(200);
             return res;
         });
@@ -76,25 +73,25 @@ test.describe("Verify API account", () => {
         const getUserResData: UserDetailRes = await getUserRes.json();
         const userDetail: DetailUser = getUserResData.user;
         expect(userDetail).toMatchObject({
-            name: apiUser.name,
-            email: apiUser.email,
-            title: apiUser.title,
-            birth_day: apiUser.birth_date,
-            birth_month: apiUser.birth_month,
-            birth_year: apiUser.birth_year,
-            first_name: apiUser.firstname,
-            last_name: apiUser.lastname,
-            company: apiUser.company,
-            address1: apiUser.address1,
-            address2: apiUser.address2,
-            country: apiUser.country,
-            zipcode: apiUser.zipcode,
-            state: apiUser.state,
-            city: apiUser.city
+            name: updateUser.name,
+            email: updateUser.email,
+            title: updateUser.title,
+            birth_day: updateUser.birth_date,
+            birth_month: updateUser.birth_month,
+            birth_year: updateUser.birth_year,
+            first_name: updateUser.firstname,
+            last_name: updateUser.lastname,
+            company: updateUser.company,
+            address1: updateUser.address1,
+            address2: updateUser.address2,
+            country: updateUser.country,
+            zipcode: updateUser.zipcode,
+            state: updateUser.state,
+            city: updateUser.city
         })
     });
 
-    test("Get email not exsits", async({accountApi})=>{
+    test("AE02-04: Get email not exsits", async({accountApi})=>{
         const getUserRes=await test.step("Get user by email", async()=>{
             const res=await accountApi.getUserByEmail(data.emailNotExsits);
             expect(res.status()).toBe(200);

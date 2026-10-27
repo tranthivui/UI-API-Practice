@@ -1,4 +1,4 @@
-import { Locator, Page } from "playwright";
+import { Locator, Page } from "@playwright";
 
 export class CreatedAccountPage{
     readonly url="/account_created";
