@@ -40,4 +40,9 @@ export type DetailUser={
     zipcode: string,
     state: string,
     city: string
+};
+
+export type UserDetailRes={
+    responseCode: number,
+    user: DetailUser
 }

@@ -8,6 +8,10 @@ export class LoginPage {
     readonly loginBtn: Locator;
     readonly loginForm: Locator;
     readonly errorMess: Locator;
+    readonly signupForm: Locator;
+    readonly name: Locator;
+    readonly emailSignup: Locator;
+    readonly singupBtn: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -16,6 +20,10 @@ export class LoginPage {
         this.password = this.loginForm.getByRole("textbox", { name: "Password" });
         this.loginBtn = this.loginForm.getByRole("button", { name: "Login" });
         this.errorMess = this.loginForm.locator("p");
+        this.signupForm=this.page.locator(".signup-form");
+        this.name=this.signupForm.getByRole("textbox",{name:"Name"});
+        this.emailSignup=this.signupForm.getByRole("textbox",{name:"Email Address"});
+        this.singupBtn=this.signupForm.getByRole("button",{name:"Signup"});
     }
 
     async fillEmail(email: string) {
@@ -38,5 +46,23 @@ export class LoginPage {
 
     async goto() {
         await this.page.goto(this.url);
+    }
+
+    async fillSignupName(name:string){
+        await this.name.fill(name);
+    }
+
+    async fillMailSignup(mail:string){
+        await this.emailSignup.fill(mail);
+    }
+
+    async clickSignup(){
+        await this.singupBtn.click();
+    }
+
+    async signUp(name:string,email:string){
+        await this.fillSignupName(name);
+        await this.fillMailSignup(email);
+        await this.clickSignup();
     }
 }
