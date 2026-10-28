@@ -124,3 +124,77 @@ Click Delete -> Show (Account Deleted!, Continue(button))
 - Test pass nhưng không chứng minh được API update thật sự hoạt động vì data cũ và data update trùng nhau -> Khi verify 2 data giống nhau sẽ pass, nhưng không có thông tin nào được thay đổi -> Không chứng minh được API update thật sự hoạt động
 
 - Các test cần tạo mới User sẽ bị fail do dùng email đã đăng ký.  -> Cần phải sử dụng UUID để tạo random email -> Đăng ký tài khoản pass -> Các test không bị fail
+
+# NOTE FOR AE03
+## 1. Cookie
+- cookies đăng nhập: sessionid -> Xóa cookies cần phải đăng nhập lại
+- Trang không dùng localStorage
+## 2. Giỏ hàng
+- Giỏ hàng gắn với tài khoản. Chạy song song mà dùng chung một tài khoản thì dễ gây xung đột. Ví dụ testcase view và testcase delete chạy song song, testcase delete chạy trước thì testcase view sẽ fail
+
+## 3. Sản phẩm
+- Cấu trúc một sản phẩm
+    - Giá
+    - Tên
+    - Button: Add to cart
+    - Button: View Product
+- Sau khi click add to cart: Show dialog
+    - Text: Added! Your product has been added to cart.
+    - Link: View Cart
+    - Button: Continute Shopping(Click -> Đóng dialog cấu trúc sản phẩm không thay đổi)
+
+## 4. View cart
+- Cấu trúc một sản phẩm
+    - Ảnh
+    - Tên
+    - Giá
+    - Quantity
+    - Total
+    - Button xóa
+- Cart rỗng: Cart is empty! Click here to buy products.
+
+## 5. /product/detail/{id}
+- Giá
+- Textbox: Số lượng
+- Button: Add to cart
+
+## 6. Checkout
+- /checkout:
+    - Địa chỉ giao hàng
+        - Your delivery address
+            - Tên (firstname lastname)
+            - address1
+            - address2
+            - city state zipcode
+            - country
+            - mobile phone
+        - Your billing address
+            - Tên (firstname lastname)
+            - address1
+            - address2
+            - city state zipcode
+            - country
+            - mobile phone
+- / "Place Order" -> /payment
+    - Name on Card: data-qa="name-on-card"
+    - Cart Number: data-qa="card-number"
+    - CVC: data-qa="cvc"
+    - Expiration: data-qa="expiry-month"
+    - YYYY: data-qa="expiry-year"
+- Sau khi thanh toán thành công
+    - Url: https://automationexercise.com/payment_done/500
+    - Thông báo: Congratulations! Your order has been confirmed!
+
+## 7. GET /api/productsList
+- HTTPS status: 200
+- responseCode: 200
+- products: [{"id": 1, "name": "Blue Top", "price": "Rs. 500", "brand": "Polo", "category":
+{"usertype": {"usertype": "Women"}, "category": "Tops"}}, {"id": 2, "name": "Men Tshirt", "price": "Rs. 400", "brand":
+"H&M", "category": {"usertype": {"usertype": "Men"}, "category": "Tshirts"}}]
+- Cấu trúc một sản phẩm
+    - id
+    - name
+    - price
+    - brand
+    - category: usertype,category
+- price là chuỗi
