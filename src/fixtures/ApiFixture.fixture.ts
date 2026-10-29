@@ -36,7 +36,7 @@ export const apiTest = base.extend<ApiFixture>({
     }
 });
 
-async function deleteAndCheck(accountApi: AccountApi, email: string, password: string) {
+export async function deleteAndCheck(accountApi: AccountApi, email: string, password: string) {
     const res = await accountApi.deleteUser(email, password);
     const resData: ApiMessageResponse = await res.json();
     if (resData.responseCode !== 200 && resData.responseCode !== 404) {

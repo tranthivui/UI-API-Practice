@@ -4,6 +4,7 @@ import { HomePage } from "../pages/HomePage.page";
 import { SignUpPage } from "../pages/SignUpPage.page";
 import { CreatedAccountPage } from "../pages/CreatedAccountPage.page";
 import { DeleteAccountPage } from "../pages/DeleteAccountPage.page";
+import { blockAds } from "../utils/blockAds";
 
 type PageFixture = {
     loginPage: LoginPage;
@@ -15,7 +16,7 @@ type PageFixture = {
 
 export const test = base.extend<PageFixture>({
     page: async ({ page }, use) => {
-        await page.route(/googlesyndication\.com|cloudflareinsights\.com|doubleclick\.net|adtrafficquality\.google|2mdn\.net|smartadserver\.com|fundingchoicesmessages\.google\.com/, route => route.abort());
+        await blockAds(page);
         await use(page);
     },
     loginPage: async ({ page }, use) => {

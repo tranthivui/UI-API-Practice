@@ -3,7 +3,7 @@ import { NewUser } from "../types/NewUser";
 export function buildUser(overrides: Partial<NewUser> = {}): NewUser {
     const unique = crypto.randomUUID();
     return {
-        name: "Auto User",
+        name: `Auto User ${unique}`,
         email: `auto${unique}@example.com`,
         password: "Test@1234",
         title: "Mr",

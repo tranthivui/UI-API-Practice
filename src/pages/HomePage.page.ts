@@ -20,4 +20,8 @@ export class HomePage {
     async clickDeleteAccount(){
         await this.deleteAccount.click();
     }
+
+    async goto(){
+        await this.page.goto("/")
+    }
 }
