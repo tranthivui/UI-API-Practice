@@ -1,27 +1,29 @@
 import { Locator, Page } from "@playwright/test";
+import { productNames } from "../data/products";
 
 export class HomePage {
-    readonly page:Page;
+    readonly page: Page;
     readonly loggedInUser: Locator;
     readonly logoutLink: Locator;
     readonly deleteAccount: Locator;
+
 
     constructor(page: Page) {
         this.page = page;
         this.loggedInUser = this.page.getByText(" Logged in as");
         this.logoutLink = this.page.getByRole("link", { name: "Logout" });
-        this.deleteAccount=this.page.getByRole("link",{name:"Delete Account"})
+        this.deleteAccount = this.page.getByRole("link", { name: "Delete Account" });
     }
 
     async clickLogout() {
         await this.logoutLink.click();
     }
 
-    async clickDeleteAccount(){
+    async clickDeleteAccount() {
         await this.deleteAccount.click();
     }
 
-    async goto(){
+    async goto() {
         await this.page.goto("/")
     }
 }

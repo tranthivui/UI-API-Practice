@@ -5,6 +5,8 @@ import { SignUpPage } from "../pages/SignUpPage.page";
 import { CreatedAccountPage } from "../pages/CreatedAccountPage.page";
 import { DeleteAccountPage } from "../pages/DeleteAccountPage.page";
 import { blockAds } from "../utils/blockAds";
+import { ProductPage } from "../pages/ProductPage.Page";
+import { CartPage } from "../pages/CartPage.page";
 
 type PageFixture = {
     loginPage: LoginPage;
@@ -12,6 +14,8 @@ type PageFixture = {
     signupPage: SignUpPage;
     createdAccountPage: CreatedAccountPage;
     deleteAccountPage: DeleteAccountPage;
+    productPage: ProductPage;
+    cartPage: CartPage
 }
 
 export const test = base.extend<PageFixture>({
@@ -38,6 +42,17 @@ export const test = base.extend<PageFixture>({
         const accountCreatedPage=new CreatedAccountPage(page);
         await use(accountCreatedPage);
     },
+
+    productPage: async({page},use)=>{
+        const productPage=new ProductPage(page);
+        await use(productPage);
+    },
+
+    cartPage: async({page},use)=>{
+        const cartPage=new CartPage(page);
+        await use(cartPage);
+    },
+
 
     deleteAccountPage: async({ page } ,use)=>{
         const deleteAccountPage=new DeleteAccountPage(page);
