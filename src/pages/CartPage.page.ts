@@ -30,11 +30,16 @@ export class CartPage {
 
     getProductQuantity(productName: string): Locator {
         const product = this.getProductByName(productName);
-        return product.locator(".cart_description button")
+        return product.locator(".cart_quantity button")
+    }
+    
+    getProductPrice(productName: string): Locator {
+        const product = this.getProductByName(productName);
+        return product.locator(".cart_price p");
     }
 
-    getProductTotal(productName: string): Locator {
+     getProductTotal(productName: string): Locator {
         const product = this.getProductByName(productName);
-        return product.locator(".cart_total p")
+        return product.locator(".cart_total p");
     }
 }

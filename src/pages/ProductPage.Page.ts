@@ -29,7 +29,7 @@ export class ProductPage {
     });
     }
 
-    async getProductPrice(productName: string): Promise<String> {
+    async getProductPrice(productName: string): Promise<string> {
         const product = await this.getProductByName(productName);
         return product.getByRole("heading", { level: 2 }).innerText();
     }
