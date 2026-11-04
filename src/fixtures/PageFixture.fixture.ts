@@ -5,8 +5,9 @@ import { SignUpPage } from "../pages/SignUpPage.page";
 import { CreatedAccountPage } from "../pages/CreatedAccountPage.page";
 import { DeleteAccountPage } from "../pages/DeleteAccountPage.page";
 import { blockAds } from "../utils/blockAds";
-import { ProductPage } from "../pages/ProductPage.Page";
 import { CartPage } from "../pages/CartPage.page";
+import { ProductPage } from "../pages/ProductPage.Page";
+import { ProductDetailPage } from "../pages/ProductDetailPage.page";
 
 type PageFixture = {
     loginPage: LoginPage;
@@ -15,7 +16,8 @@ type PageFixture = {
     createdAccountPage: CreatedAccountPage;
     deleteAccountPage: DeleteAccountPage;
     productPage: ProductPage;
-    cartPage: CartPage
+    cartPage: CartPage;
+    produtDetailPage: ProductDetailPage
 }
 
 export const test = base.extend<PageFixture>({
@@ -33,29 +35,33 @@ export const test = base.extend<PageFixture>({
         await use(homePage);
     },
 
-    signupPage: async({ page }, use)=>{
-        const signupPage=new SignUpPage(page);
+    signupPage: async ({ page }, use) => {
+        const signupPage = new SignUpPage(page);
         await use(signupPage);
     },
 
-    createdAccountPage: async({ page } ,use)=>{
-        const accountCreatedPage=new CreatedAccountPage(page);
+    createdAccountPage: async ({ page }, use) => {
+        const accountCreatedPage = new CreatedAccountPage(page);
         await use(accountCreatedPage);
     },
 
-    productPage: async({page},use)=>{
-        const productPage=new ProductPage(page);
+    productPage: async ({ page }, use) => {
+        const productPage = new ProductPage(page);
         await use(productPage);
     },
 
-    cartPage: async({page},use)=>{
-        const cartPage=new CartPage(page);
+    cartPage: async ({ page }, use) => {
+        const cartPage = new CartPage(page);
         await use(cartPage);
     },
 
+    produtDetailPage: async ({ page }, use) => {
+        const produtDetailPage = new ProductDetailPage(page);
+        await use(produtDetailPage);
+    },
 
-    deleteAccountPage: async({ page } ,use)=>{
-        const deleteAccountPage=new DeleteAccountPage(page);
+    deleteAccountPage: async ({ page }, use) => {
+        const deleteAccountPage = new DeleteAccountPage(page);
         await use(deleteAccountPage);
     }
 })

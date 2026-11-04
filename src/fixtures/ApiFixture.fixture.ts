@@ -3,17 +3,24 @@ import { test as base } from "@playwright/test"
 import { NewUser, User } from "../types/NewUser";
 import { buildUser } from "../data/userFactory";
 import { ApiMessageResponse } from "../types/response";
+import { ProductApi } from "../api/ProductApi";
 
 type ApiFixture = {
     accountApi: AccountApi,
     apiUser: NewUser,
     cleanupUsers: User[];
+    productApi: ProductApi;
 }
 
 export const apiTest = base.extend<ApiFixture>({
     accountApi: async ({ request }, use) => {
         const accountApi = new AccountApi(request);
         await use(accountApi);
+    },
+
+    productApi: async ({ request }, use) => {
+        const productApi = new ProductApi(request);
+        await use(productApi);
     },
 
     apiUser: async ({ accountApi }, use) => {

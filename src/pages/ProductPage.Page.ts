@@ -30,13 +30,18 @@ export class ProductPage {
     }
 
     async getProductPrice(productName: string): Promise<string> {
-        const product = await this.getProductByName(productName);
+        const product = this.getProductByName(productName);
         return product.getByRole("heading", { level: 2 }).innerText();
     }
 
     async clickAddProduct(productName: string) {
-        const product = await this.getProductByName(productName);
+        const product = this.getProductByName(productName);
         await product.locator(".productinfo a.add-to-cart").click();
+    }
+
+    async clickViewProduct(productName: string) {
+        const product = this.getProductByName(productName);
+        await product.getByRole("link",{name: "View Product"}).click();
     }
 
     async clickContinuteShopping(){

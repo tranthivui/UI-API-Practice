@@ -4,3 +4,4 @@ export const GET_USER_DETAIL_API="/api/getUserDetailByEmail"
 export const UPDATE_USER_API="/api/updateAccount"
 export const DELETE_USER_API="/api/deleteAccount"
 export const AUTH_FILE=(index:number) => `playwright/.auth/worker-${index}.json`
+export const GET_ALL_PRODUCT_API="api/productsList"

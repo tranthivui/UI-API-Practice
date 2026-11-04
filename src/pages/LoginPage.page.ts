@@ -45,7 +45,9 @@ export class LoginPage {
     }
 
     async goto() {
-        await this.page.goto(this.url);
+        await this.page.goto(this.url,{
+            waitUntil: "domcontentloaded"
+        });
     }
 
     async fillSignupName(name:string){

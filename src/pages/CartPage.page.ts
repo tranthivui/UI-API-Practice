@@ -5,11 +5,13 @@ export class CartPage {
     readonly page: Page;
     readonly producTable: Locator;
     readonly cartRows: Locator;
+    readonly cartEmtyText: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.producTable = this.page.locator("#cart_info_table");
         this.cartRows = this.producTable.locator("tbody tr");
+        this.cartEmtyText=this.page.locator("#empty_cart");
     }
 
     async goto() {
