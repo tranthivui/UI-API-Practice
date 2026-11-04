@@ -198,3 +198,8 @@ Click Delete -> Show (Account Deleted!, Continue(button))
     - brand
     - category: usertype,category
 - price là chuỗi
+
+# NOTE AFTER CLONE CODE
+- Chay lenh npm install de cai lai cac module trong node_modules(file nay da config trong file .gitignore khi commit len git thi khong commit file nay)
+- Tao file .env de khai bao cac bien privte(file nay cung da config trong .gitignore khong commit len git)
+ - Chay lenh npm install dotenv

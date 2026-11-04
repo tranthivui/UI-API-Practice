@@ -13,7 +13,7 @@ type AuthWorkerFixtures ={
     workerStorageState: string;
 };
 
-export const test=baseTest.extend<{},AuthWorkerFixtures>({
+export const test=baseTest.extend<{},AuthWorkerFixtures>({// extend nhan 2 gia tri {scope test} {scope worker} -> cac fixture khac o so 2 de trong nen ko can khai bao, fixture auth can scope worker nen phai de trong o dau tien
     workerAccount: [async({playwright},use)=>{
         //1. Tu tao request context (vi khong co fixture request)
         const requestContext= await playwright.request.newContext({baseURL:ENV.baseUrl});

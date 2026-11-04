@@ -1,6 +1,4 @@
 import { Locator, Page } from "@playwright/test";
-import { productNames } from "../data/products";
-
 export class HomePage {
     readonly page: Page;
     readonly loggedInUser: Locator;

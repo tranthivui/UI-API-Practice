@@ -32,14 +32,29 @@ export class CartPage {
         const product = this.getProductByName(productName);
         return product.locator(".cart_quantity button")
     }
-    
+
     getProductPrice(productName: string): Locator {
         const product = this.getProductByName(productName);
         return product.locator(".cart_price p");
     }
 
-     getProductTotal(productName: string): Locator {
+    getProductTotal(productName: string): Locator {
         const product = this.getProductByName(productName);
         return product.locator(".cart_total p");
+    }
+
+    async deleteProduct(product: Locator) {
+        await product.locator(".cart_quantity_delete").click();
+    }
+
+    async clearCart() {
+        await this.page.goto(this.url);
+        await this.page.waitForLoadState();
+        let count=await this.cartRows.count();
+        while (count > 0) {
+            await this.deleteProduct(this.cartRows.first());
+            await this.cartRows.nth(count-1).waitFor({state:"detached"});
+            count--;
+        }
     }
 }
