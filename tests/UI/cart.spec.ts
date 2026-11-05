@@ -1,7 +1,6 @@
 import { listProducts } from "../../src/data/products";
 import { expect, test } from "../../src/fixtures/AuthFixture.fixture";
-import { CartPage } from "../../src/pages/CartPage.page";
-import { Product, ProductDetailRes } from "../../src/types/Product";
+import { Product } from "../../src/types/Product";
 import { GetAllProductListRes } from "../../src/types/response";
 import { findProductByName } from "../../src/utils/findProductByName";
 import { parsePrice } from "../../src/utils/parsePrice";
@@ -17,7 +16,7 @@ test.describe("Verify product", () => {
         await expect(homePage.loggedInUser).toHaveText(` Logged in as ${workerAccount.name}`);
     })
 
-    test("AE03-02: Add product from Product page", async ({ productPage, workerAccount, cartPage }) => {
+    test("AE03-02: Add product from Product page", async ({ productPage, cartPage }) => {
         const totalProduct = listProducts.length;
 
         await test.step("Goto product page", async () => {
@@ -51,11 +50,11 @@ test.describe("Verify product", () => {
         })
     })
 
-    test("AE03-03: Delete product from", async ({ productPage, produtDetailPage, cartPage }) => {
+    test("AE03-03: Add product from product detail page", async ({ productPage, produtDetailPage, cartPage }) => {
         const product: Product = listProducts[1];
         await test.step("Click view detail", async () => {
             await productPage.goto();
-            await expect(productPage.page.waitForURL(productPage.url));
+            await expect(productPage.productHeading).toBeVisible();
             await productPage.clickViewProduct(product.name);
             await productPage.page.waitForURL(/\/product_details\/\d+/);
         });
@@ -73,7 +72,7 @@ test.describe("Verify product", () => {
         })
     })
 
-    test("AE03-04: Delete product from cart", async ({ productPage, workerAccount, cartPage }) => {
+    test("AE03-04: Delete product from cart", async ({ productPage, cartPage }) => {
         const totalProduct = listProducts.length;
         await test.step("Goto product page", async () => {
             await productPage.goto();
@@ -95,18 +94,21 @@ test.describe("Verify product", () => {
             await expect(cartPage.cartRows).toHaveCount(totalProduct);
         });
 
-        await test.step("Delete one product and cart have one product", async () => {
-            await cartPage.deleteProduct(cartPage.cartRows.first());
-            await expect(cartPage.cartRows).toHaveCount(1);
-        })
-
-        await test.step("Delete product and cart emty", async () => {
-            await cartPage.deleteProduct(cartPage.cartRows.first());
-            await expect(cartPage.cartEmtyText).toBeVisible();
-        })
+        await test.step("Delete product and verify", async () => {
+            const listProductName = listProducts.map(p => p.name);
+            for (let i = 0; i < totalProduct; i++) {
+                await cartPage.deleteProductByName(listProductName[i]);
+                const remaining = listProductName.slice(i + 1);
+                if (remaining.length > 0) {
+                    await expect(cartPage.getListProductNames()).toHaveText(remaining)
+                } else {
+                    await expect(cartPage.cartEmtyText).toBeVisible();
+                }
+            }
+        });
     })
 
-    test("AE03-05: Price on UI and API are the same", async ({ productPage, workerAccount, cartPage, productApi }) => {
+    test("AE03-05: Price on UI and API are the same", async ({ productPage, cartPage, productApi }) => {
         const getListProductRes = await productApi.getListProduct();
         expect(getListProductRes.status()).toBe(200);
         const getListProductResDa: GetAllProductListRes = await getListProductRes.json();

@@ -1,4 +1,4 @@
-import { APIRequestContext, APIResponse } from "playwright";
+import { APIRequestContext, APIResponse } from "@playwright/test";
 import { GET_ALL_PRODUCT_API } from "../config/paths";
 
 export class ProductApi{

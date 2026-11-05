@@ -6,12 +6,14 @@ export class CartPage {
     readonly producTable: Locator;
     readonly cartRows: Locator;
     readonly cartEmtyText: Locator;
+    readonly checkoutLink: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.producTable = this.page.locator("#cart_info_table");
         this.cartRows = this.producTable.locator("tbody tr");
-        this.cartEmtyText=this.page.locator("#empty_cart");
+        this.cartEmtyText = this.page.locator("#empty_cart");
+        this.checkoutLink=this.page.getByText("Proceed To Checkout");
     }
 
     async goto() {
@@ -45,18 +47,28 @@ export class CartPage {
         return product.locator(".cart_total p");
     }
 
-    async deleteProduct(product: Locator) {
+    private async clickDelete(product: Locator) {
         await product.locator(".cart_quantity_delete").click();
+    }
+
+    async deleteProductByName(productName: string) {
+        const product = this.getProductByName(productName);
+        await this.clickDelete(product);
+        await product.waitFor({ state: "detached" });
     }
 
     async clearCart() {
         await this.page.goto(this.url);
         await this.page.waitForLoadState();
-        let count=await this.cartRows.count();
+        let count = await this.cartRows.count();
         while (count > 0) {
-            await this.deleteProduct(this.cartRows.first());
-            await this.cartRows.nth(count-1).waitFor({state:"detached"});
+            await this.clickDelete(this.cartRows.first());
+            await this.cartRows.nth(count - 1).waitFor({ state: "detached" });
             count--;
         }
+    }
+
+    async clickCheckOut(){
+        await this.checkoutLink.click();
     }
 }
