@@ -5,3 +5,4 @@ export function parsePrice(price: string): number {
     }
     return parseFloat(matched[1]);
 }
+

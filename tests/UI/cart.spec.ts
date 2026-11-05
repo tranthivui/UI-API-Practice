@@ -27,7 +27,7 @@ test.describe("Verify product", () => {
         await test.step("Add product", async () => {
             for (let i = 0; i < totalProduct; i++) {
                 await productPage.clickAddProduct(listProducts[i].name);
-            //    await productPage.clickContinuteShopping();
+                //    await productPage.clickContinuteShopping();
             }
         });
 
@@ -123,7 +123,7 @@ test.describe("Verify product", () => {
         await test.step("Add product", async () => {
             for (const product of expectedProducts) {
                 await productPage.clickAddProduct(product.name);
-               // await productPage.clickContinuteShopping();
+                // await productPage.clickContinuteShopping();
             }
         });
 
