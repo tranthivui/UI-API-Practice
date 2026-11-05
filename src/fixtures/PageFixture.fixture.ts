@@ -6,7 +6,7 @@ import { CreatedAccountPage } from "../pages/CreatedAccountPage.page";
 import { DeleteAccountPage } from "../pages/DeleteAccountPage.page";
 import { blockAds } from "../utils/blockAds";
 import { CartPage } from "../pages/CartPage.page";
-import { ProductPage } from "../pages/ProductPage.Page";
+import { ProductPage } from "../pages/ProductPage.page";
 import { ProductDetailPage } from "../pages/ProductDetailPage.page";
 import { CheckOutPage } from "../pages/CheckOutPage.page";
 import { PaymentPage } from "../pages/PaymentPage.page";

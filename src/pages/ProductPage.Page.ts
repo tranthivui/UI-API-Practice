@@ -37,6 +37,7 @@ export class ProductPage {
     async clickAddProduct(productName: string) {
         const product = this.getProductByName(productName);
         await product.locator(".productinfo a.add-to-cart").click();
+        await this.clickContinuteShopping();
     }
 
     async clickViewProduct(productName: string) {

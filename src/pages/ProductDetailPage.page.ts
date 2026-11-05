@@ -6,6 +6,7 @@ export class ProductDetailPage {
     readonly addToCartBtn: Locator;
     readonly addSuccessDialog: Locator;
     readonly viewCartLink: Locator;
+    readonly continueShoppingBtn: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -13,6 +14,7 @@ export class ProductDetailPage {
         this.addToCartBtn = this.page.getByRole("button", { name: "Add to cart" });
         this.addSuccessDialog=this.page.locator(".modal-dialog.modal-confirm");
         this.viewCartLink=this.addSuccessDialog.locator("a");
+        this.continueShoppingBtn=this.addSuccessDialog.getByRole("button",{name: "Continue Shopping"});
     }
 
     async fillQuantity(quantity: number) {
@@ -25,5 +27,9 @@ export class ProductDetailPage {
 
     async clickViewCart() {
         await this.viewCartLink.click();
+    }
+
+    async clickContinueShopping(){
+        await this.continueShoppingBtn.click();
     }
 }

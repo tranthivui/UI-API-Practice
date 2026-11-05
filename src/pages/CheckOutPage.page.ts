@@ -17,7 +17,7 @@ export class CheckOutPage {
     constructor(page: Page) {
         this.page = page;
         this.deliveryAddress = this.page.locator("#address_delivery");
-        this.name = this.deliveryAddress.locator(".address_firstname.addrss_lastname");
+        this.name = this.deliveryAddress.locator(".address_firstname.address_lastname");
         this.mobile_number = this.deliveryAddress.locator(".address_phone");
         this.country = this.deliveryAddress.locator(".address_country_name");
         this.city = this.deliveryAddress.locator(".address_city.address_state_name.address_postcode");
@@ -30,8 +30,9 @@ export class CheckOutPage {
 
     getProductByName(productName: string): Locator {
         return this.productRows.filter({
-            has: this.page.locator(".cart_description h4").filter({
-                hasText: new RegExp(`^${productName}/`)
+            has: this.page.getByRole("heading",{
+                name: productName,
+                exact:true
             })
         })
     }
@@ -47,9 +48,8 @@ export class CheckOutPage {
     }
 
     getTotalPrice(): Locator {
-        const rowTotal = this.productRows.locator("tr").filter({
+        return this.productRows.filter({
             hasText: "Total Amount"
-        });
-        return rowTotal.locator(".cart_total_price");
+        }).locator(".cart_total_price");
     }
 }
