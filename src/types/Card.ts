@@ -1,7 +1,7 @@
 export type Card={
     cardName: string,
-    cardNumber: number,
-    cvc: number,
-    month: number,
-    year: number
+    cardNumber: string,
+    cvc: string,
+    month: string,
+    year: string
 }

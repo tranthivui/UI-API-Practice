@@ -5,7 +5,7 @@ export class CheckOutPage {
     readonly page: Page;
     readonly deliveryAddress: Locator;
     readonly name: Locator;// title. first_name last_name
-    readonly companyAdd1Add2: Locator;// 0: Company 1: Add1 2: Add2
+    readonly addressLines: Locator;// 0: Company 1: Add1 2: Add2
     readonly country: Locator;
     readonly city: Locator;// city state zipcode
     readonly mobile_number: Locator;
@@ -21,7 +21,7 @@ export class CheckOutPage {
         this.mobile_number = this.deliveryAddress.locator(".address_phone");
         this.country = this.deliveryAddress.locator(".address_country_name");
         this.city = this.deliveryAddress.locator(".address_city.address_state_name.address_postcode");
-        this.companyAdd1Add2 = this.deliveryAddress.locator(".address_address1.address_address2");
+        this.addressLines = this.deliveryAddress.locator(".address_address1.address_address2");
         this.productTable = this.page.locator(".table.table-condensed");
         this.productRows = this.productTable.locator("tr");
         this.cartTotalPrice = this.productTable.locator(".cart_total_price");
@@ -51,5 +51,9 @@ export class CheckOutPage {
         return this.productRows.filter({
             hasText: "Total Amount"
         }).locator(".cart_total_price");
+    }
+
+    async clickPlaceOrder(){
+        await this.placeOrder.click();
     }
 }

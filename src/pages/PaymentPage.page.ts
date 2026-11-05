@@ -1,4 +1,5 @@
 import { Locator, Page } from "@playwright/test";
+import { Card } from "../types/Card";
 
 export class PaymentPage {
     readonly url = "/payment";
@@ -12,8 +13,8 @@ export class PaymentPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.cardName = this.page.locator("[data-qa='name_on_card']");
-        this.cardNumber = this.page.locator("[data-qa='card_number']");
+        this.cardName = this.page.locator("[data-qa='name-on-card']");
+        this.cardNumber = this.page.locator("[data-qa='card-number']");
         this.cvc = this.page.locator("[data-qa='cvc']");
         this.month = this.page.locator("[data-qa='expiry-month']");
         this.year = this.page.locator("[data-qa='expiry-year']");
@@ -44,12 +45,12 @@ export class PaymentPage {
         await this.payBtn.click();
     }
 
-    async pay(cardName:string,cardNumber:string,cvc:string,month:string,year:string){
-        await this.fillCardName(cardName);
-        await this.fillCardNumber(cardNumber);
-        await this.fillCVC(cvc);
-        await this.fillMonth(month);
-        await this.fillYear(year);
+    async pay(card:Card){
+        await this.fillCardName(card.cardName);
+        await this.fillCardNumber(card.cardNumber);
+        await this.fillCVC(card.cvc);
+        await this.fillMonth(card.month);
+        await this.fillYear(card.year);
         await this.clickPayandConfirm();
     }
 }
