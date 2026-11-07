@@ -162,7 +162,7 @@ Click Delete -> Show (Account Deleted!, Continue(button))
 - /checkout:
     - Địa chỉ giao hàng
         - Your delivery address
-            - Tên (firstname lastname)
+            - Tên (title. firstname lastname)
             - address1
             - address2
             - city state zipcode
@@ -175,6 +175,7 @@ Click Delete -> Show (Account Deleted!, Continue(button))
             - city state zipcode
             - country
             - mobile phone
+    - total Amount: Nằm ở dòng cuối cùng của bảng sản phẩm, chung tbody
 - / "Place Order" -> /payment
     - Name on Card: data-qa="name-on-card"
     - Cart Number: data-qa="card-number"
@@ -198,6 +199,14 @@ Click Delete -> Show (Account Deleted!, Continue(button))
     - brand
     - category: usertype,category
 - price là chuỗi
+
+## 8. AE03-Thiết kế
+### 8.2 Tách AuthFixture riêng
+-  Chỉ có AE03 cần trạng thái đã login nên cần import. Ae01 và AE02 vẫn chạy trạng thái chưa đăng nhập. Nếu đặt chung cho mọi test thì phải test.use storageState rỗng ở từng file -> Dễ bị quên
+### 8.2 Vì sao dọn giỏ hàng trước mỗi test và dọn bằng cách nào
+- Vì giỏ hàng gắn với user, nếu không dọn giỏ hàng trước khi test thì khi chạy song song thêm sản phẩm vào giỏ đã có hàng thì test verify sẽ bị fail.
+- Dọn bằng cách beforeEach() gọi clearCart()
+
 
 # NOTE AFTER CLONE CODE
 - Chay lenh npm install de cai lai cac module trong node_modules(file nay da config trong file .gitignore khi commit len git thi khong commit file nay)
