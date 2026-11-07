@@ -6,11 +6,11 @@ import { findProductByName } from "../../src/utils/findProductByName";
 import { parsePrice } from "../../src/utils/parsePrice";
 
 test.describe("Verify product", () => {
-/*
+
     test.beforeEach("Clear cart", async ({ cartPage }) => {
         await cartPage.clearCart();
     });
-*/
+    
     test("AE03-01: Logged by storageState", async ({ homePage, workerAccount }) => {
         await homePage.goto();
         await expect(homePage.loggedInUser).toHaveText(` Logged in as ${workerAccount.name}`);
