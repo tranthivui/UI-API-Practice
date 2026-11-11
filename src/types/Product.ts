@@ -10,15 +10,13 @@ export type ProductDetailRes = {
     price: string;
     brand: string;
     category: ProductCategory;
-};
+}
 
 export type ProductCategory = {
-    usertype: {
-        usertype: string;
-    };
+    usertype: UserType;
     category: string;
-};
+}
 
 export type UserType = {
     usertype: string;
-};
+}

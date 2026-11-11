@@ -17,12 +17,10 @@ test.describe("Checkout process", async () => {
             await expect(productPage.page).toHaveURL(productPage.url);
             for (const product of listProducts) {
                 await productPage.clickViewProduct(product.name);
-                await produtDetailPage.page.waitForLoadState("load");
                 await produtDetailPage.fillQuantity(product.quantity);
                 await produtDetailPage.clickAddToCart();
                 await produtDetailPage.clickContinueShopping();
                 await productPage.goto();
-                await productPage.page.waitForLoadState("load");
             }
         });
 
@@ -62,8 +60,7 @@ test.describe("Checkout process", async () => {
 
         await test.step("Fill payment info", async () => {
             await checkOutPage.clickPlaceOrder();
-            await paymentPage.pay(cardInfo);
-            await paymentDonePage.page.waitForLoadState("load");
+            await paymentPage.pay(cardInfo)
         });
 
         await test.step("Verify payment success", async () => {

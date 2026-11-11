@@ -5,3 +5,4 @@ export const UPDATE_USER_API="/api/updateAccount"
 export const DELETE_USER_API="/api/deleteAccount"
 export const AUTH_FILE=(index:number) => `playwright/.auth/worker-${index}.json`
 export const GET_ALL_PRODUCT_API="api/productsList"
+export const API_SEARCH_PRODUCT="/api/searchProduct"

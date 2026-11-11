@@ -8,6 +8,9 @@ export class ProductPage {
     readonly productHeading: Locator;
     readonly addSuccessDialog: Locator;
     readonly continueShoppingBtn: Locator;
+    readonly searchInput: Locator;
+    readonly searchBtn: Locator;
+    readonly searchTitle: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -15,7 +18,9 @@ export class ProductPage {
         this.productList = this.producTable.locator(".col-sm-4");
         this.productHeading=this.page.getByRole("heading",{level:2,name:"ALL PRODUCTS"});
         this.addSuccessDialog=this.page.locator(".modal-dialog.modal-confirm");
-        this.continueShoppingBtn=this.addSuccessDialog.getByRole("button",{name:"Continue Shopping"});
+        this.continueShoppingBtn=this.addSuccessDialog.getByRole("button",{name:"Continue Shopping"}); this.searchInput = this.page.getByRole("textbox", { name: "Search Product" })
+        this.searchBtn = this.page.locator("#submit_search");
+        this.searchTitle=this.page.getByRole("heading",{level:2, name: "SEARCHED PRODUCTS"});
     }
 
     async goto(){
@@ -47,5 +52,23 @@ export class ProductPage {
 
     async clickContinuteShopping(){
         await this.continueShoppingBtn.click();
+    }
+
+    getListProductNames(): Locator{
+        return this.producTable.locator(".productinfo.text-center p");
+
+    }
+
+    async fillSearchKeyword(keyword:string){
+        await this.searchInput.fill(keyword);
+    }
+
+    async clickSearchBtn(){
+        await this.searchBtn.click();
+    }
+
+    async search(keyword:string){
+        await this.fillSearchKeyword(keyword);
+        await this.clickSearchBtn();
     }
 }
