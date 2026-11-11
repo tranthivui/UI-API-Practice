@@ -597,3 +597,61 @@ Click Delete -> Show (Account Deleted!, Continue(button))
 # NOTE AE05
 - Chạy nhiều worker bị 503, chạy 1 worker thì pass, nên đã giới hạn workers.
 - Lỗi không lặp lại, chỉ do hệ thống bên ngoài.
+
+## Workflow
+name: Playwright Tests 
+on: -> Môĩ lần push/pull code từ nhánh main hoặc masterr
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs: 
+  test:
+    timeout-minutes: 60 -> Set timeout là 60min, nếu test chạy quá 60min thì sẽ bị hủy
+    runs-on: ubuntu-latest -> Chạy trên máy ảo ubuntu phiên bản latest
+    steps:
+    - uses: actions/checkout@v4 -> tải code của repo về máy ảo. Không có bước này thì máy ảo trống
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies -> cài đặt dependencies đúng phiên bản trong package-lock.json, xóa node modules cũ trước khi cài. Khác npm install ở chỗ không tự nâng phiên bản nên kết quả lần nào cũng giống nhau
+      run: npm ci
+    - name: Install Playwright Browsers 
+      run: npx playwright install --with-deps --> cài đặt cả 3 browser(chromium, firefox, webkit) cùng thư viện hệ điều hành chúng cần.
+    - name: Run Playwright tests -> chạy toàn bộ test
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4 -> tải thư mục playwright/report lên github để tải về xem
+      if: ${{ !cancelled() }} -> Vẫn upload kể cả fail. Chỉ bỏ qua khi job bị hủy. Lúc test fail mới là lúc cần report nhất
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30 -> giữ file 30 ngày
+
+## Hiện tại CI có chạy được không? Thiếu gì? (Gợi ý: .env không có trên CI, vậy requireEnv sẽ làm gì?)
+- Hiện tại CI không chạy được do thiếu file .env
+- .env không có trên CI nên requireEnv sẽ throw lỗi
+- env.ts được import ngay trong playwright.config.ts, mà requireEnv chạy lúc import. Vì vậy khi thiếu biến, cả lần chạy fail ngay lúc đọc config, không test nào chạy, kể cả test AE04 vốn không cần đăng nhập.
+
+## Test nào cần tài khoản thật (USER_EMAIL…), test nào tự tạo tài khoản (AE02/AE03)? Liệt kê.
+- Test cần tài khoản thật: AE01
+- Test tự tạo tài khoản: AE02, AE03
+
+## Đọc tài liệu: GitHub Secrets khác Variables thế nào? BASE_URL nên đặt ở đâu, USER_PASSWORD nên đặt ở đâu? Vì sao?
+- Secrets: Dùng để lưu trữ thông tin nhạy cảm trong github ví dụ username/password, api token, access token, DB username/password, ssh private key, các thông tin đăng nhập môi trường UAT, PROD, playwright test account
+-> github secrests giúp sử dụng các thông tin này trong github actions mà không cần hardcode vào source code hoặc commit lên github
+- Variables: Lưu trữ các thông tin cấu hình không nhạy cảm của repository hoặc môi trường chạy github actions
+- Secrets khác variables: 
+  - secrets lưu thông tin nhạy cảm, bảo mật còn variables lưu thông tin không nhạy cảm
+  - Secret bị che thành *** trong log, và sau khi lưu thì không xem lại được giá trị, chỉ ghi đè.
+  - Variable xem và sửa thoải mái, không bị che.
+  - Cách dùng
+    - {{ secrets.USER_PASSWORD }}
+    - ${{ vars.BASE_URL }}
+- BASE_URL nên đặt ở variables vì là thông tin không nhạy cảm có thể public
+- USER_PASS nên đặt ở secrets do là thông tin nhạy cảm không thể public
+
+## Pull request từ fork có đọc được secrets không? Ảnh hưởng gì?
+- Pull request từ fork có đọc được secrets không: Không đọc được secrets trong repo gốc
+- Khi có pull request từ fork:
+  - Workflow vẫn chạy. Chỉ là các biến secret thành chuỗi rỗng, nên requireEnv throw và job đỏ.
+- Vì sao GitHub làm vậy: chống người lạ fork repo, sửa workflow để in hoặc gửi secret ra ngoài.
