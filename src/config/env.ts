@@ -5,7 +5,7 @@ dotenv.config();
 function requireEnv(name:string):string{
     const baseUrlValue=process.env[name];
      if(!baseUrlValue){
-        throw new Error(`Thieu bien moi truong ${name}`);
+        throw new Error(`Missing env: ${name}`);
      }
      return baseUrlValue;
 }
