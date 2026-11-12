@@ -674,6 +674,6 @@ jobs:
 - Bài học: lỗi trong log là “locator timeout”, không nói thật nguyên nhân. Phải xem screenshot/video mới biết. retries: 1 trên CI giúp vượt qua các lỗi môi trường kiểu này, nhưng vẫn phải theo dõi test flaky trong report, không bỏ qua.
 
 ## concurrency, workflow_dispatch chỉ chạy khi đã có trên main
-- concurrencyL Nhóm theo workflow+nhánh. Push commit mới lên mà job cũ chưa chạy xong thì job cũ bị hủy chạy job mới. Lợi ích là chỉ chạy job của commit cuối cùng, đỡ tốn tài nguyên và thời gian
+- concurrency: Nhóm theo workflow+nhánh. Push commit mới lên mà job cũ chưa chạy xong thì job cũ bị hủy chạy job mới. Lợi ích là chỉ chạy job của commit cuối cùng, đỡ tốn tài nguyên và thời gian
 - workflow_dispatch: nút Run workflow chỉ hiện khi file workflow đã nằm trên nhánh mặc định.
-  - Ví dụ: Phải merge PQ#` vào main rồi mới chạy tay được(run #32, @api ra 15 passed)
+  - Ví dụ: Phải merge PR#1 vào main rồi mới chạy tay được(run #32, @api ra 15 passed)
