@@ -8,7 +8,7 @@ test.describe("Verify API and UI", () => {
         deleteSuccess: "Account Deleted!",
         getUserNotExsitsMess: "Account not found with this email, try another email!"
     }
-    test("AE02-05: Create account by API then login in WEB", async ({ apiUser, loginPage, homePage }) => {
+    test("AE02-05: Create account by API then login in WEB",{tag: "@ui"}, async ({ apiUser, loginPage, homePage }) => {
         await test.step("Login on WEB", async () => {
             await loginPage.goto();
             await loginPage.login(apiUser.email, apiUser.password);
@@ -19,7 +19,7 @@ test.describe("Verify API and UI", () => {
         });
     })
 
-    test("AE02-06: Register by UI then verify by API", async ({ loginPage, signupPage, homePage, createdAccountPage, accountApi, cleanupUsers }) => {
+    test("AE02-06: Register by UI then verify by API",{tag: ["@ui", "@smoke"]}, async ({ loginPage, signupPage, homePage, createdAccountPage, accountApi, cleanupUsers }) => {
         const user = buildUser();
         cleanupUsers.push({ email: user.email, password: user.password });
         await test.step("Sign up on WEB", async () => {
@@ -60,7 +60,7 @@ test.describe("Verify API and UI", () => {
         });
     })
 
-    test("AE02-07: Delete account via UI", async ({ apiUser, loginPage, homePage, deleteAccountPage, accountApi }) => {
+    test("AE02-07: Delete account via UI",{tag: "@ui"}, async ({ apiUser, loginPage, homePage, deleteAccountPage, accountApi }) => {
         await test.step("Login on WEB", async () => {
             await loginPage.goto();
             await loginPage.login(apiUser.email, apiUser.password);

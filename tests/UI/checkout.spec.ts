@@ -11,7 +11,7 @@ test.describe("Checkout process", async () => {
         await cartPage.clearCart();
     });
 
-    test("AE03-06: Checkout end-to-end", async ({ productPage, cartPage, checkOutPage, paymentPage, paymentDonePage, workerAccount, produtDetailPage }) => {
+    test("AE03-06: Checkout end-to-end",{tag: ["@ui","@smoke"]}, async ({ productPage, cartPage, checkOutPage, paymentPage, paymentDonePage, workerAccount, produtDetailPage }) => {
         await test.step("Add product to card", async () => {
             await productPage.goto();
             await expect(productPage.page).toHaveURL(productPage.url);

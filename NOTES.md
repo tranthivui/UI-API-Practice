@@ -655,3 +655,10 @@ jobs:
 - Khi có pull request từ fork:
   - Workflow vẫn chạy. Chỉ là các biến secret thành chuỗi rỗng, nên requireEnv throw và job đỏ.
 - Vì sao GitHub làm vậy: chống người lạ fork repo, sửa workflow để in hoặc gửi secret ra ngoài.
+
+## Gan tag @smoke
+- Gan tag @smoke cho AE03-06: Checkout end-to-end, AE01-01: Verify login success,AE02-06: Register by UI then verify by API, AE04-UI-01: search UI -> Tron mot luong chinh
+ - Tao tai khoan
+ - Login
+ - Search 
+ - Payment: Add product -> Payment

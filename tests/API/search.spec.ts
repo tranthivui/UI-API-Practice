@@ -6,7 +6,7 @@ import { message } from '../../src/data/message';
 
 test.describe("Verify search", () => {
   for (const searchText of searchKeyWords.found) {
-    test(`AE04-01: Search API: ${searchText}`, async ({ productApi }) => {
+    test(`AE04-01: Search API: ${searchText}`,{tag: "@api"}, async ({ productApi }) => {
       const products = await getSearchResult(productApi, searchText);
       expect(products.length, `No product found for ${searchText}`).toBeGreaterThan(0);
       for (const product of products) {
@@ -19,12 +19,12 @@ test.describe("Verify search", () => {
     })
   };
 
-  test("AE04-API-NEG-01: Search API with no result", async ({ productApi }) => {
+  test("AE04-API-NEG-01: Search API with no result",{tag: "@api"}, async ({ productApi }) => {
     const products = await getSearchResult(productApi, searchKeyWords.notFound);
     expect(products).toHaveLength(0);
   })
 
-  test("AE04-API-NEG-02: Search API without keyword", async ({ productApi }) => {
+  test("AE04-API-NEG-02: Search API without keyword",{tag: "@api"}, async ({ productApi }) => {
     const searchRes = await productApi.searchProductWithoutKeyword();
     expect(searchRes.status()).toBe(200);
     const searchResData: ApiMessageResponse = await searchRes.json();

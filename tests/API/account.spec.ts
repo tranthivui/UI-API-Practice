@@ -11,7 +11,7 @@ test.describe("Verify API account", () => {
         emailNotExsits: "fakeEmail@example.com",
         getEmaiNotExsitsMess: "Account not found with this email, try another email!"
     }
-    test("AE02-01: Create account by API then verify by other API", async ({ accountApi, apiUser }) => {
+    test("AE02-01: Create account by API then verify by other API",{tag: "@api"}, async ({ accountApi, apiUser }) => {
         const logindata: ApiMessageResponse = await test.step("Verify login user", async () => {
             const res = await accountApi.verifyLogin(apiUser.email, apiUser.password);
             expect(res.status()).toBe(200);
@@ -44,7 +44,7 @@ test.describe("Verify API account", () => {
         })
     });
 
-    test("AE02-02: Create duplicate email", async ({ accountApi, apiUser }) => {
+    test("AE02-02: Create duplicate email",{tag: "@api"}, async ({ accountApi, apiUser }) => {
         const createRes = await test.step("Create duplicate account", async () => {
             const res = await accountApi.createUser(apiUser);
             expect(res.status()).toBe(200);
@@ -55,7 +55,7 @@ test.describe("Verify API account", () => {
         expect(createResData.message).toBe(data.createDupEmailMess);
     });
 
-    test("AE02-03: Update account", async ({ accountApi, apiUser }) => {
+    test("AE02-03: Update account",{tag: "@api"}, async ({ accountApi, apiUser }) => {
         const updateUser={...apiUser,name: "Change name",city: "New City"};
         const updateRes = await test.step("Update account", async () => {
             const res = await accountApi.updateUser(updateUser);
@@ -91,7 +91,7 @@ test.describe("Verify API account", () => {
         })
     });
 
-    test("AE02-04: Get email not exsits", async({accountApi})=>{
+    test("AE02-04: Get email not exsits",{tag: "@api"}, async({accountApi})=>{
         const getUserRes=await test.step("Get user by email", async()=>{
             const res=await accountApi.getUserByEmail(data.emailNotExsits);
             expect(res.status()).toBe(200);

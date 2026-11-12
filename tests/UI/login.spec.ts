@@ -7,7 +7,7 @@ const data = {
 }
 
 test.describe("Verify login UI", () => {
-  test("AE01-01: Verify login success", async ({ loginPage, homePage }) => {
+  test("AE01-01: Verify login success",{tag: ["@ui","@smoke"]}, async ({ loginPage, homePage }) => {
     await test.step("Fill login info", async () => {
       await loginPage.goto();
       await loginPage.login(ENV.userEmail, ENV.userPassword);
@@ -20,7 +20,7 @@ test.describe("Verify login UI", () => {
     });
   })
 
-  test("AE01-02: Login with invalid password", async ({ loginPage, homePage }) => {
+  test("AE01-02: Login with invalid password",{tag: "@ui"}, async ({ loginPage, homePage }) => {
     await test.step("Fill login info", async () => {
       await loginPage.goto();
       await loginPage.login(listUser.invalidPass.email, listUser.invalidPass.password);
@@ -31,7 +31,7 @@ test.describe("Verify login UI", () => {
       await expect(homePage.loggedInUser).not.toBeVisible();
     });
   });
-  test("AE01-03: Log out success", async ({ loginPage, homePage }) => {
+  test("AE01-03: Log out success",{tag: "@ui"}, async ({ loginPage, homePage }) => {
     await test.step("Fill login info", async () => {
       await loginPage.goto();
       await loginPage.login(ENV.userEmail, ENV.userPassword);

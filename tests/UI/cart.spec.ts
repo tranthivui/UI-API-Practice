@@ -11,12 +11,12 @@ test.describe("Verify product", () => {
         await cartPage.clearCart();
     });
     
-    test("AE03-01: Logged by storageState", async ({ homePage, workerAccount }) => {
+    test("AE03-01: Logged by storageState",{tag: "@ui"}, async ({ homePage, workerAccount }) => {
         await homePage.goto();
         await expect(homePage.loggedInUser).toHaveText(` Logged in as ${workerAccount.name}`);
     })
 
-    test("AE03-02: Add product from Product page", async ({ productPage, cartPage }) => {
+    test("AE03-02: Add product from Product page",{tag:"@ui"}, async ({ productPage, cartPage }) => {
         const totalProduct = listProducts.length;
 
         await test.step("Goto product page", async () => {
@@ -50,7 +50,7 @@ test.describe("Verify product", () => {
         })
     })
 
-    test("AE03-03: Add product from product detail page", async ({ productPage, produtDetailPage, cartPage }) => {
+    test("AE03-03: Add product from product detail page",{tag: "@ui"}, async ({ productPage, produtDetailPage, cartPage }) => {
         const product: Product = listProducts[1];
         await test.step("Click view detail", async () => {
             await productPage.goto();
@@ -72,7 +72,7 @@ test.describe("Verify product", () => {
         })
     })
 
-    test("AE03-04: Delete product from cart", async ({ productPage, cartPage }) => {
+    test("AE03-04: Delete product from cart",{tag: "@ui"}, async ({ productPage, cartPage }) => {
         const totalProduct = listProducts.length;
         await test.step("Goto product page", async () => {
             await productPage.goto();
@@ -108,7 +108,7 @@ test.describe("Verify product", () => {
         });
     })
 
-    test("AE03-05: Price on UI and API are the same", async ({ productPage, cartPage, productApi }) => {
+    test("AE03-05: Price on UI and API are the same",{tag: "@ui"}, async ({ productPage, cartPage, productApi }) => {
         const getListProductRes = await productApi.getListProduct();
         expect(getListProductRes.status()).toBe(200);
         const getListProductResDa: GetAllProductListRes = await getListProductRes.json();

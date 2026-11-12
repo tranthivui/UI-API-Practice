@@ -13,7 +13,7 @@ const data = {
 }
 
 test.describe("Verify login API", () => {
-  test("AE01-04: Verify login API: Correct user", async ({ request }) => {
+  test("AE01-04: Verify login API: Correct user",{tag: "@api"}, async ({ request }) => {
     const loginRes = await request.post(VERIFY_LOGIN_API, {
       form: {
         email: ENV.userEmail,
@@ -26,7 +26,7 @@ test.describe("Verify login API", () => {
     expect(loginResData.message).toBe(data.loginSuccess)
   });
 
-  test("AE01-05: Verify login API: Incorrect password", async ({ request }) => {
+  test("AE01-05: Verify login API: Incorrect password",{tag: "@api"}, async ({ request }) => {
     const loginRes = await request.post(VERIFY_LOGIN_API, {
       form: {
         email: listUser.invalidPass.email,
@@ -39,7 +39,7 @@ test.describe("Verify login API", () => {
     expect(loginResData.message).toBe(data.loginInvalidPass);
   });
 
-  test("AE01-06: Verify login API: Missing email", async ({ request }) => {
+  test("AE01-06: Verify login API: Missing email",{tag: "@api"}, async ({ request }) => {
     const loginRes = await request.post(VERIFY_LOGIN_API, {
       form: {
         password: ENV.userPassword,
@@ -51,7 +51,7 @@ test.describe("Verify login API", () => {
     expect(loginResData.message).toBe(data.loginMisingParam);
   });
 
-  test("AE01-07: Verify login API: Invalid method", async ({ request }) => {
+  test("AE01-07: Verify login API: Invalid method",{tag: "@api"}, async ({ request }) => {
     const loginRes = await request.delete(VERIFY_LOGIN_API);
     expect(loginRes.status()).toBe(200);
     const loginResData: ApiMessageResponse = await loginRes.json();
