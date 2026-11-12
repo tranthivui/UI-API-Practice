@@ -15,7 +15,7 @@ test.describe("Verify API and UI", () => {
             await homePage.page.waitForURL("/");
         });
         await test.step("Verify login success", async () => {
-            await expect(homePage.loggedInUser).toHaveText(`Logged in as ${apiUser.name}`);
+            await expect(homePage.loggedInUser).toHaveText(`Logged in as name ${apiUser.name}`);
         });
     })
 
