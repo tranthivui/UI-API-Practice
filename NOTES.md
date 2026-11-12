@@ -663,3 +663,16 @@ jobs:
  - Search 
  - Payment: Add product -> Payment
 - Gan tag @unit: parsePrice -> Can unit test nen gan mot tag moi khi can check lai cac ham unit test
+
+## github đã chec secret nhưng vẫn không được echo ra vì
+- GitHub thường che giá trị Secret khi tìm thấy đúng chuỗi đã đăng ký
+- Nếu secret bị biến đổi như mã hóa base64, viết ngược… -> GitHub không đảm bảo hiển che được
+- GitHub masking chủ yếu áp dụng cho log, không tự động đảm bảo xóa Secret khỏi các artifact này.
+- Nếu repository là public, người khác có thể tải artifact được chia sẻ và phân tích dữ liệu bên trong.
+
+## AE03-06 Checkout lần đầu fail
+- Hiện tượng: AE03-06 timeout ở bước click “View Product”, retry thì pass, nên report đánh dấu flaky.
+- Nguyên nhân: screenshot cho thấy trang báo “heavy load (queue full)”, tức là server quá tải, không phải lỗi locator hay lỗi logic.
+- Bài học: lỗi trong log là “locator timeout”, không nói thật nguyên nhân. Phải xem screenshot/video mới biết. retries: 1 trên CI giúp vượt qua các lỗi môi trường kiểu này, nhưng vẫn phải theo dõi test flaky trong report, không bỏ qua.
+
+## concurrency, workflow_dispatch chỉ chạy khi đã có trên main
