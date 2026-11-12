@@ -4,7 +4,7 @@ import { getSearchResult } from "../helpers/search.helper";
 
 test.describe("Verify search result from UI with API", () => {
     for (const keyword of searchKeyWords.found) {
-        test(`AE04-UI-01: search UI "${keyword}" matches API`,{tag: ["@ui","@smoke"]}, async ({ productApi, productPage }) => {
+        test(`AE04-UI-01: search UI "${keyword}" matches API`,{tag: keyword === "jean" ? ["@ui","@smoke"] : undefined}, async ({ productApi, productPage }) => {
             const productFromApi = await getSearchResult(productApi, keyword);
             await productPage.goto();
             await productPage.search(keyword);

@@ -662,3 +662,4 @@ jobs:
  - Login
  - Search 
  - Payment: Add product -> Payment
+- Gan tag @unit: parsePrice -> Can unit test nen gan mot tag moi khi can check lai cac ham unit test

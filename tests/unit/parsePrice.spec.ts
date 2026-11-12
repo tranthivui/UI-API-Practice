@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { parsePrice } from "../../src/utils/parsePrice";
 
-test.describe("parsePrice", () => {
+test.describe("parsePrice",{tag: "@unit"}, () => {
     test("parse valid price", () => {
         expect(parsePrice("Rs. 500")).toBe(500);
     });

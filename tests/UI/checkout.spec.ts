@@ -3,7 +3,7 @@ import { listProducts } from "../../src/data/products";
 import { expect, test } from "../../src/fixtures/AuthFixture.fixture";
 import { parsePrice } from "../../src/utils/parsePrice";
 
-test.describe("Checkout process", async () => {
+test.describe("Checkout process", () => {
 
     test.beforeEach("Clear cart", async ({ cartPage }) => {
         await cartPage.goto();
