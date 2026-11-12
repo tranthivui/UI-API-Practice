@@ -11,15 +11,15 @@ test.describe("Checkout process", () => {
         await cartPage.clearCart();
     });
 
-    test("AE03-06: Checkout end-to-end",{tag: ["@ui","@smoke"]}, async ({ productPage, cartPage, checkOutPage, paymentPage, paymentDonePage, workerAccount, produtDetailPage }) => {
+    test("AE03-06: Checkout end-to-end",{tag: ["@ui","@smoke"]}, async ({ productPage, cartPage, checkOutPage, paymentPage, paymentDonePage, workerAccount, productDetailPage }) => {
         await test.step("Add product to card", async () => {
             await productPage.goto();
             await expect(productPage.page).toHaveURL(productPage.url);
             for (const product of listProducts) {
                 await productPage.clickViewProduct(product.name);
-                await produtDetailPage.fillQuantity(product.quantity);
-                await produtDetailPage.clickAddToCart();
-                await produtDetailPage.clickContinueShopping();
+                await productDetailPage.fillQuantity(product.quantity);
+                await productDetailPage.clickAddToCart();
+                await productDetailPage.clickContinueShopping();
                 await productPage.goto();
             }
         });

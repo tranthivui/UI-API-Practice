@@ -3,16 +3,16 @@ import { Locator, Page } from "@playwright/test";
 export class CartPage {
     readonly url = "/view_cart";
     readonly page: Page;
-    readonly producTable: Locator;
+    readonly productTable: Locator;
     readonly cartRows: Locator;
-    readonly cartEmtyText: Locator;
+    readonly cartEmptyText: Locator;
     readonly checkoutLink: Locator;
 
     constructor(page: Page) {
         this.page = page;
-        this.producTable = this.page.locator("#cart_info_table");
-        this.cartRows = this.producTable.locator("tbody tr");
-        this.cartEmtyText = this.page.locator("#empty_cart");
+        this.productTable = this.page.locator("#cart_info_table");
+        this.cartRows = this.productTable.locator("tbody tr");
+        this.cartEmptyText = this.page.locator("#empty_cart");
         this.checkoutLink=this.page.getByText("Proceed To Checkout");
     }
 

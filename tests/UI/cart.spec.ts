@@ -50,7 +50,7 @@ test.describe("Verify product", () => {
         })
     })
 
-    test("AE03-03: Add product from product detail page",{tag: "@ui"}, async ({ productPage, produtDetailPage, cartPage }) => {
+    test("AE03-03: Add product from product detail page",{tag: "@ui"}, async ({ productPage, productDetailPage, cartPage }) => {
         const product: Product = listProducts[1];
         await test.step("Click view detail", async () => {
             await productPage.goto();
@@ -60,9 +60,9 @@ test.describe("Verify product", () => {
         });
 
         await test.step("Click add to cart at product detail page", async () => {
-            await produtDetailPage.fillQuantity(product.quantity);
-            await produtDetailPage.clickAddToCart();
-            await produtDetailPage.clickViewCart();
+            await productDetailPage.fillQuantity(product.quantity);
+            await productDetailPage.clickAddToCart();
+            await productDetailPage.clickViewCart();
         });
 
         await test.step("Verify cart detail", async () => {
@@ -102,7 +102,7 @@ test.describe("Verify product", () => {
                 if (remaining.length > 0) {
                     await expect(cartPage.getListProductNames()).toHaveText(remaining)
                 } else {
-                    await expect(cartPage.cartEmtyText).toBeVisible();
+                    await expect(cartPage.cartEmptyText).toBeVisible();
                 }
             }
         });

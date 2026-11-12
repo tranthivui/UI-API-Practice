@@ -20,7 +20,7 @@ type PageFixture = {
     deleteAccountPage: DeleteAccountPage;
     productPage: ProductPage;
     cartPage: CartPage;
-    produtDetailPage: ProductDetailPage;
+    productDetailPage: ProductDetailPage;
     checkOutPage: CheckOutPage;
     paymentPage: PaymentPage;
     paymentDonePage: PaymentDonePage;
@@ -61,9 +61,9 @@ export const test = base.extend<PageFixture>({
         await use(cartPage);
     },
 
-    produtDetailPage: async ({ page }, use) => {
-        const produtDetailPage = new ProductDetailPage(page);
-        await use(produtDetailPage);
+    productDetailPage: async ({ page }, use) => {
+        const productDetailPage = new ProductDetailPage(page);
+        await use(productDetailPage);
     },
 
     checkOutPage: async ({ page }, use) => {
