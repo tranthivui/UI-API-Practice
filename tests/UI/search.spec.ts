@@ -4,10 +4,10 @@ import { getSearchResult } from "../helpers/search.helper";
 
 test.describe("Verify search result from UI with API", () => {
     for (const keyword of searchKeyWords.found) {
-        test(`AE04-UI-01: search UI "${keyword}" matches API`,{tag: keyword === "jean" ? ["@ui","@smoke"] : undefined}, async ({ productApi, productPage }) => {
-            const productFromApi = await getSearchResult(productApi, keyword);
+        test(`AE04-UI-01: search UI "${keyword.searchText}" matches API`,{tag: keyword.smoke? ["@ui","@smoke"]:"@ui"}, async ({ productApi, productPage }) => {
+            const productFromApi = await getSearchResult(productApi, keyword.searchText);
             await productPage.goto();
-            await productPage.search(keyword);
+            await productPage.search(keyword.searchText);
             await expect(productPage.searchTitle).toBeVisible();
             const listProductNames = productPage.getListProductNames();
             await expect(listProductNames).toHaveCount(productFromApi.length);

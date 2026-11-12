@@ -5,15 +5,15 @@ import { ApiMessageResponse } from '../../src/types/response';
 import { message } from '../../src/data/message';
 
 test.describe("Verify search", () => {
-  for (const searchText of searchKeyWords.found) {
-    test(`AE04-01: Search API: ${searchText}`,{tag: "@api"}, async ({ productApi }) => {
-      const products = await getSearchResult(productApi, searchText);
-      expect(products.length, `No product found for ${searchText}`).toBeGreaterThan(0);
+  for (const keyword of searchKeyWords.found) {
+    test(`AE04-01: Search API: ${keyword.searchText}`,{tag: keyword.smoke? ["@api","@smoke"]:"@api"}, async ({ productApi }) => {
+      const products = await getSearchResult(productApi, keyword.searchText);
+      expect(products.length, `No product found for ${keyword.searchText}`).toBeGreaterThan(0);
       for (const product of products) {
         expect(
-          product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          product.category.category.toLowerCase().includes(searchText.toLowerCase()),
-          `Product ${product.name} has neither name nor category containing ${searchText}`
+          product.name.toLowerCase().includes(keyword.searchText.toLowerCase()) ||
+          product.category.category.toLowerCase().includes(keyword.searchText.toLowerCase()),
+          `Product ${product.name} has neither name nor category containing ${keyword.searchText}`
         ).toBe(true);
       }
     })
