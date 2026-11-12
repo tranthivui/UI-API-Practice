@@ -657,18 +657,16 @@ jobs:
 - Vì sao GitHub làm vậy: chống người lạ fork repo, sửa workflow để in hoặc gửi secret ra ngoài.
 
 ## Gan tag @smoke
-- Gan tag @smoke cho AE03-06: Checkout end-to-end, AE01-01: Verify login success,AE02-06: Register by UI then verify by API, AE04-UI-01: search UI -> Tron mot luong chinh
- - Tao tai khoan
- - Login
- - Search 
- - Payment: Add product -> Payment
+- Gan tag @smoke cho AE01-01, AE02-06, AE03-06, AE04-01 “jean” (API) và AE04-UI-01 “jean”
+  - Mỗi luồng chính 1 test, search chỉ 1 từ khóa, đánh dấu bằng cờ smoke trong data
 - Gan tag @unit: parsePrice -> Can unit test nen gan mot tag moi khi can check lai cac ham unit test
 
-## github đã chec secret nhưng vẫn không được echo ra vì
+## github đã che secret nhưng vẫn không được echo ra vì
 - GitHub thường che giá trị Secret khi tìm thấy đúng chuỗi đã đăng ký
 - Nếu secret bị biến đổi như mã hóa base64, viết ngược… -> GitHub không đảm bảo hiển che được
 - GitHub masking chủ yếu áp dụng cho log, không tự động đảm bảo xóa Secret khỏi các artifact này.
 - Nếu repository là public, người khác có thể tải artifact được chia sẻ và phân tích dữ liệu bên trong.
+- Ví dụ trong dự án của em: trace của test login có bước fill ô password, mở trace là đọc được mật khẩu dạng chữ thường, không bị che. Vì vậy em dùng tài khoản test riêng, đặt retention-days: 7 cho artifact tự xoá, và chỉ ghi trace khi retry (trace: "on-first-retry").
 
 ## AE03-06 Checkout lần đầu fail
 - Hiện tượng: AE03-06 timeout ở bước click “View Product”, retry thì pass, nên report đánh dấu flaky.
@@ -676,3 +674,6 @@ jobs:
 - Bài học: lỗi trong log là “locator timeout”, không nói thật nguyên nhân. Phải xem screenshot/video mới biết. retries: 1 trên CI giúp vượt qua các lỗi môi trường kiểu này, nhưng vẫn phải theo dõi test flaky trong report, không bỏ qua.
 
 ## concurrency, workflow_dispatch chỉ chạy khi đã có trên main
+- concurrencyL Nhóm theo workflow+nhánh. Push commit mới lên mà job cũ chưa chạy xong thì job cũ bị hủy chạy job mới. Lợi ích là chỉ chạy job của commit cuối cùng, đỡ tốn tài nguyên và thời gian
+- workflow_dispatch: nút Run workflow chỉ hiện khi file workflow đã nằm trên nhánh mặc định.
+  - Ví dụ: Phải merge PQ#` vào main rồi mới chạy tay được(run #32, @api ra 15 passed)
