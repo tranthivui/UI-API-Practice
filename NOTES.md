@@ -763,3 +763,34 @@ jobs:
 |Test Fail lần đầu|Có trace|Ghi trace ở lần retry
 |Dung lượng lưu trữ|Lớn hơn|Thường nhỏ hơn
 |Overhead|Có thể cao hơn|Thường thấp hơn
+
+# AE06
+## Chuan bi
+### Dang ky
+- URL: https://conduit-api.bondaracademy.com/api/users
+- Body
+  {
+    "email": "autoplaywright@example.com",
+    "password": "*********",
+    "username": "AutoPlaywright"
+}
+- Statuts code
+  - Thanh cong: 201
+  - Email da ton tai: 422 Unprocessable Content
+- Response
+  - Thanh cong
+    {
+    "user": {
+        "id": 92187,
+        "email": "autoplaywright@example.com",
+        "username": "AutoPlaywright",
+        "bio": null,
+        "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo5MjE4N30sImlhdCI6MTc5NDU2MjU0MiwiZXhwIjoxNzk5NzQ2NTQyfQ.ANYVzpixRVPbkJXQjl-IWL6Yqr2FLXSFS7GuTpbt1IU"
+    }
+}
+  - Email da ton tai
+  {"errors":{"email":["has already been taken"]}}
+
+  ### Dang nhap
+  
