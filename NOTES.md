@@ -677,3 +677,89 @@ jobs:
 - concurrency: Nhóm theo workflow+nhánh. Push commit mới lên mà job cũ chưa chạy xong thì job cũ bị hủy chạy job mới. Lợi ích là chỉ chạy job của commit cuối cùng, đỡ tốn tài nguyên và thời gian
 - workflow_dispatch: nút Run workflow chỉ hiện khi file workflow đã nằm trên nhánh mặc định.
   - Ví dụ: Phải merge PR#1 vào main rồi mới chạy tay được(run #32, @api ra 15 passed)
+
+# Cau hoi phong van
+1. CI là gì? Vì sao chạy test trên CI thay vì chỉ chạy ở máy? Test pass local nhưng fail trên CI thường vì những lý do nào (nêu ít nhất 3)?
+- CI (Continuous Integration – Tích hợp liên tục) là quá trình tự động kiểm tra và tích hợp code mỗi khi developer push code hoặc tạo Pull Request. Vi du khi pull code
+	- Khi bạn push code lên GitHub:
+		- GitHub nhận code mới.
+		- GitHub Actions tự động kích hoạt workflow.
+		- Tạo môi trường chạy test trên máy ảo (runner).
+		- Cài đặt Node.js và dependencies.
+		- Cài đặt browser Chromium.
+		- Chạy Playwright test.
+		- Trả về kết quả Pass/Fail và lưu report.
+- Chay test tren CI thay vi chay o may
+	- Tester khong can phai chay tay moi khi co code moi
+	- Moi truong sach, doc lap
+	- Phat hien loi som khi co push hoac pull code truoc khi merge vao main
+- Test pass o local nhung fail tren CI
+	- Thieu thong tin tai khoan: Vi du trong bai thieu bien BASE_URL -> Chay fail
+	- Do luc chay trang bi qua tai: Vi du trong bai chay test AE06 luc dau fail do trang bi heavy load, lan sau retry thanh cong
+	- Moi truong khac nhau. CI la linux may local la windown
+2. Bạn quản lý thông tin đăng nhập trong CI thế nào? Secret khác variable ra sao? Nếu lỡ commit mật khẩu lên repo thì phải làm gì (đủ các bước)?
+- Quan ly thong tin dang nhap trong CI:
+	- Thong tin quan trong, khong the de lo: Khai bao trong secrets
+	- Thong tin co the public: Khai bao trong variables
+- Secret khac variable: Secrets luu thong tin quan trong khong the public con variable thi luu thong tin co the public
+- Neu lo commit mat khau len repo: 
+	- Xoa log da chay de khong luu lai mat khau
+	- Tao lai tai khoan moi
+	- Cau hinh thong tin tai khoan vao secrets
+3. Tag @smoke dùng để làm gì? Chọn test smoke theo tiêu chí nào? Khi nào chạy smoke, khi nào chạy full?
+- Tag @smoke: de chay cac case chinh dam bao luong chinh khong bi loi khi co code moi
+- Chon test smole theo tieu chi: Dam bao mot luong chinh cua he thong chay duoc. Vi du trong bai nay chon smoke chay du mot luong Tao moi tai khoan -> Dang nhap -> Search -> Add produc -> Thanh toan
+- smoke chay khi: Can kiem tra nhanh he thong co chay on dinh khong va chuc nang chinh co hoat dong binh thuong khong
+	- Dev vua push code moi
+	- Pull code truoc khi merge
+	- Vua deploy UAT, STG, PROD
+	- Co ban build moi
+- Chay full test: Khi can kiem tra xem code moi co anh huong den he thong khong
+	- Chay truoc khi deploy PROD
+	- Khi tich hop nhieu chuc nang
+4. Trace viewer cho bạn thấy những gì? Vì sao dùng on-first-retry thay vì on? Khi CI đỏ, bạn debug theo thứ tự nào?
+- Trace viewer cho thấy: 
+	- action: Cac thao tac playwright da thuc hien click, fill...
+	- timeline: thoi gian thuc hien tung action
+	- Screenshots: anh chup giao dien trong qua trinh test
+	- Source: Code test tương ứng với từng action
+	- Logs: Thông tin log của quá trình thực thi
+	- Network: Các request/response liên quan, nếu được ghi lại
+	- Errors: Lỗi xảy ra trong quá trình chạy test
+	- Vi du: Trong bai tap nay, khi chay ae05-ci-selfcheck -> Mo trace thay duoc bi fail do 
+		- Locator:  getByText(' Logged in as')
+			Expected: "Logged in as name Auto User bda40eb1-27eb-4cb2-bc45-4626d4f7b3bb"
+			Received: " Logged in as Auto User bda40eb1-27eb-4cb2-bc45-4626d4f7b3bb 
+		- Anh chup man hinh tai luc fail
+		- Code fail tai dong nao
+		- Thoi gian bi fail
+- Vì sao dùng on-first-retry thay vì on
+	- Tiết kiệm dung lượng lưu trữ artifact trên CI.
+	- Giảm overhead khi chạy test so với ghi trace cho mọi lần chạy.
+	- Khi test bị lỗi, có trace để phân tích lần retry.
+- Khi CI đỏ, bạn debug theo thứ tự nào?
+	- Xem log tai buoc run test xem fail o dau
+	- Tai log artifact -> Xem log cu the: sai tai buoc nao, anh chup va video ghi lai buoc thuc hien
+	- Xac dinh nguen nhan loi la gi: thieu bien, timeout..
+	- Re-procedue bug
+5. retries trên CI có lợi và có hại gì? Một test chỉ pass ở lần retry (flaky) thì bạn xử lý thế nào?
+- Loi ich
+	- Giảm ảnh hưởng của lỗi tạm thời: Ví dụ mạng chậm hoặc server phản hồi không ổn định
+	- Phát hiện flaky test: Nhận diện test có kết quả không nhất quán
+	- Có thêm dữ liệu debug: Có thể phân tích kết quả giữa lần chạy đầu và lần retry
+- Tac hai
+	- Tăng thời gian chạy: Test Fail phải chạy lại
+	- Tốn tài nguyên CI: Nhiều test retry làm tăng thời gian và chi phí
+- Một test chỉ pass ở lần retry
+	- Xac dinh test co thuc su flaky hay khong: Chi loi o CI hay ca local, tan suat loi, co fail tai cung 1 buoc hay khong...
+	- Xem trace viewr: Xem loi tai buoc nao,thong tin loi cu the
+	- Xac dinh nguyen nhan goc va sua loi
+	- Vi du test AE03-06 bi fail sau khi trace loi thi do trang bi qua tai, bi ca local va CI -> Do server trang bi qua tai tai thoi diem do
+### NOTE on va on-first-retry
+|Tiêu chí|on|on-first-retry
+|-----|----------|----------|
+|Khi nào ghi trace?|Mọi lần chạy test|Khi test chạy retry lần đầu
+|Test Pass lần đầu|Có trace|Không có trace
+|Test Fail lần đầu|Có trace|Ghi trace ở lần retry
+|Dung lượng lưu trữ|Lớn hơn|Thường nhỏ hơn
+|Overhead|Có thể cao hơn|Thường thấp hơn
