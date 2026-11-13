@@ -793,4 +793,21 @@ jobs:
   {"errors":{"email":["has already been taken"]}}
 
   ### Dang nhap
-  
+  - Url: https://conduit-api.bondaracademy.com/api/users/login
+  - Body
+  {
+    "email": "autoplaywright@example.com",
+    "password": "********"
+}
+- Status: 200
+- Response:
+{
+    "user": {
+        "email": "autoplaywright@example.com",
+        "username": "AutoPlaywright",
+        "bio": null,
+        "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+        "token": "************"
+    }
+}
+- Token nam o "token" trong response
