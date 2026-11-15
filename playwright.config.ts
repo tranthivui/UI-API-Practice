@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import { ENV } from './src/config/env';
+import { CONDUIT_ENV, ENV } from './src/config/env';
 
 export default defineConfig({
   testDir: './tests',
@@ -35,6 +35,13 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: /conduit\//
+    },
+
+    {
+      name: 'conduit',
+      testMatch: /conduit\/.*\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"], baseURL: CONDUIT_ENV.url },
     }
   ],
 });
