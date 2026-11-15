@@ -810,4 +810,147 @@ jobs:
         "token": "************"
     }
 }
-- Token nam o "token" trong response
+- Token nam o field "token" trong response
+
+# AE06
+
+## Chuẩn bị
+
+### 1. Đăng ký tài khoản
+
+- **URL:** https://conduit-api.bondaracademy.com/api/users
+
+- **Request Body:**
+
+```json
+{
+  "email": "autoplaywright@example.com",
+  "password": "********",
+  "username": "AutoPlaywright"
+}
+```
+
+- **Status Code:**
+  - Thành công: `201 Created`
+  - Email đã tồn tại: `422 Unprocessable Content`
+
+- **Response:**
+
+**Trường hợp đăng ký thành công:**
+
+```json
+{
+  "user": {
+    "id": 92187,
+    "email": "autoplaywright@example.com",
+    "username": "AutoPlaywright",
+    "bio": null,
+    "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+    "token": "********"
+  }
+}
+```
+
+**Trường hợp email đã tồn tại:**
+
+```json
+{
+  "errors": {
+    "email": ["has already been taken"]
+  }
+}
+```
+
+### 2. Đăng nhập tài khoản
+
+- **URL:** https://conduit-api.bondaracademy.com/api/users/login
+
+- **Request Body:**
+
+```json
+{
+  "email": "autoplaywright@example.com",
+  "password": "********"
+}
+```
+
+- **Status Code:** `200 OK`
+
+- **Response:**
+
+```json
+{
+  "user": {
+    "email": "autoplaywright@example.com",
+    "username": "AutoPlaywright",
+    "bio": null,
+    "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+    "token": "********"
+  }
+}
+```
+
+- Token nằm trong trường `token` của Response.
+
+### Header
+
+Request GET `/user` sau khi đăng nhập gửi Header:
+
+| Key | Value |
+| --- | --- |
+| authorization | Token ******** |
+
+### Local storage
+- Key chứa token: jwtToken
+- Xóa key rồi F5: Trang không còn đăng nhập
+
+### Mã Lỗi
+- Sai token
+  - Status: 401
+  - Response
+```json
+{
+    "status": "error",
+    "message": "missing authorization credentials"
+}
+```
+
+- Không header
+  - Status: 401
+  - Response
+```json
+{
+    "status": "error",
+    "message": "missing authorization credentials"
+}
+```
+
+### Bài viết
+#### Tạo bài viết mới
+- URL: https://conduit-api.bondaracademy.com/api/articles/
+- Body
+```json
+{
+    "title": "Test auto",
+    "description": "Test auto playwright",
+    "body": "- Create by UI\n- Verify by API",
+    "tagList": [
+        "#playwright"
+    ]
+}
+```
+- Trường slug trong response
+"slug": "Test-auto-92187", -> title - account id
+
+#### Xóa bài viết
+- URL: 
+https://conduit-api.bondaracademy.com/api/articles/Auto-test-new-92187 (Auto-test-new-92187-> slug trong response khi tạo bài viết)
+- Status code: 204
+- Response: Trắng
+
+### Xóa user
+- API không có enpoint xóa user. Đã gọi thử API DELETE /api/user với token hợp lệ nhưng trả về lỗi 404
+- Hiện tại với trang web này thì không thể xóa user, user vẫn tồn tại
+- Nếu là công ty thì có thể
+  - Hỏi DEV xem có API xóa user không
+  - Script dọn dẹp data ở DB

@@ -1,0 +1,4 @@
+export const CONDUIT_REGISTER_API="users"
+export const CONDUIT_LOGIN_API="users/login"
+export const CONDUIT_GET_USER_API="user"
+export const CONDUIT_ARTICLE="articles"
