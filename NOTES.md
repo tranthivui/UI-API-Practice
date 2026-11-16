@@ -917,3 +917,73 @@ https://conduit-api.bondaracademy.com/api/articles/Auto-test-new-92187 (Auto-tes
 ## Ly do chon parallelIndex thay vi workerIndex
 - workerIndex: Không phải “worker số mấy trong số N worker”. Mỗi khi Playwright khởi động lại worker thì số này tăng tiếp, ví dụ khi chuyển sang project khác hoặc sau một test fail. Vì vậy email ..._w${workerIndex} sẽ tăng dần theo thời gian, và hướng “email cố định, không tạo thêm user” bị phá.
 - parallelIndex: Giá trị luôn nằm trong khoảng 0 … workers-1 (2 worker → chỉ có 0 và 1), và worker khởi động lại sẽ dùng lại số cũ.
+
+## AE06 – Tự kiểm
+
+### Tự kiểm 1 – Mỗi worker 1 user (fixture scope worker)
+- **Lệnh:** `npm run test:conduit` (`--project=conduit --workers=2`).
+- **Kết quả:** 8 test, chỉ **2 dòng** `Login with worker: 0/1 and username: ae06_txv_w0/w1`, tức mỗi worker login 1 lần.
+- **Đổi tạm `workerUser` → scope test:**
+  - Phải đổi **cả chuỗi** `workerUser → workerToken → authApi`, vì fixture worker không được phụ thuộc fixture test (Playwright báo lỗi).
+  - Kết quả **6 dòng**: 6 test dùng chuỗi fixture; API-02/03 tự tạo context nên không kích hoạt.
+- **Số request login thật** (mỗi lần chạy chuỗi gọi login 2 lần: kiểm user + lấy token):
+
+  | Scope | Request login |
+  |---|---|
+  | worker | 2 × 2 = **4** |
+  | test | 6 × 2 = **12** |
+
+  100 test thì khoảng 200 so với 4. Scope worker nhanh hơn và đỡ tải server (bài học 503).
+- **Phát hiện:**
+  - Ban đầu dùng `workerIndex`: chạy 1 worker mà log ra `registered ..._w2`.
+  - `workerIndex` tăng khi worker khởi động lại (đổi project, sau test fail), nên đã đổi sang `parallelIndex` (0…workers-1).
+- Đã đổi lại scope worker, không push bản thử.
+
+### Tự kiểm 2 – Bỏ `extraHTTPHeaders` trong `authApi`
+- **API-01:** `Expected 200, Received 401` đúng dòng kiểm status, chứng minh header thật sự được gửi.
+- **API-04, UI-01:** fail ở fixture `article` ("Can not create article"). Đúng, nhưng thông báo lỗi nên kèm status/body để biết ngay nguyên nhân.
+- **UI-02 – 2 phát hiện:**
+  - `GET /articles/:slug` vẫn 200 khi không có header → API đọc bài viết là **public**, không chứng minh được header. Chỉ create/delete/`GET /user` cần token.
+  - `deleteArticle` 401 → test fail trước khi xoá → **bài bị bỏ lại** trên server. Đã sửa bằng fixture `createdSlugs` (push slug ngay khi có, teardown luôn xoá).
+- Đã trả lại header.
+
+### Tự kiểm 3 – Bỏ `addInitScript` (đăng nhập UI đến từ token)
+- **Lần 1:** UI-01 fail ở `getArticle(...)` ("No articles are here... yet"), còn `headingName` vẫn pass vì **trang profile là public**. Fail nhưng không rõ nguyên nhân (có thể do tạo bài lỗi, sai title…).
+- **Lần 2 (sai nguyên tắc):** sửa test thành expect "Sign in" → pass. Tự kiểm phải **giữ nguyên test, chỉ phá setup**.
+- **Lần 3:**
+  - Thêm `expect(navBar.getUserLink(username)).toBeVisible()` vào đầu UI-01.
+  - Chỉ bỏ `addInitScript` → fail **đúng dòng** `getUserLink` (element not found).
+  - Trả lại `addInitScript` → pass.
+  - Kết luận: assertion fail khi sai và pass khi đúng.
+- **Phát hiện:**
+  - Profile khi chưa đăng nhập hiện nút "Follow"; đăng nhập đúng user thì không có.
+  - Danh sách bài trống khi chưa đăng nhập.
+
+### Tự kiểm 4 – Không tranh chấp dữ liệu
+- **Lệnh:** `npm run test:conduit -- --repeat-each=3`. Cần `--` để npm chuyển tham số cho Playwright. Lần đầu quên `--`: npm báo `Unknown cli config` và vẫn chạy 8 test.
+- **Kết quả:** `Running 24 tests using 2 workers` → **24 passed (21.2s)**.
+- 3 slug UI-02 khác nhau, hậu tố `-92836` / `-92835`. Slug = title + id tài khoản, nên 2 worker dùng 2 user khác nhau.
+- **Lý do không trùng:** user riêng theo worker + title có `Date.now()`.
+
+### Tự kiểm 5 – Token trong report/trace
+- **Lệnh:** `npm run test:conduit -- --trace on` → `npx playwright show-report`. Nếu báo `EADDRINUSE 9323` thì tắt server cũ hoặc dùng `--port 9324`.
+- **Token có ở:**
+  - Trace → Network → request API → Request headers `Authorization: Token <jwt>`;
+  - response `users/login` (UI-03);
+  - bước `fill` password.
+- Log console (local và CI) **không** in token.
+
+**Vì sao không commit `playwright-report/`, `test-results/`:**
+- Chứa token, password, response body (dữ liệu nhạy cảm).
+- Là kết quả sinh ra mỗi lần chạy: nặng, diff rác, conflict.
+- Ai cần thì chạy lại hoặc tải artifact CI.
+- Đã có trong `.gitignore`.
+
+**Rủi ro CI:**
+- Artifact giữ 7 ngày, repo public, nên test fail có trace có thể lộ token.
+- Vì vậy chỉ dùng tài khoản test riêng (`ae06_txv_w0/w1`) và giữ `trace: "on-first-retry"`.
+
+### Cách chạy 2 worker
+- `workers: 1` toàn cục: automationexercise quá tải (503) khi chạy song song.
+- Conduit chạy 2 worker bằng script `test:conduit` (`--project=conduit --workers=2`), không ảnh hưởng bộ cũ.
+- `npx playwright test` chạy cả 46 test nhưng chỉ 1 worker cho cả 2 project.

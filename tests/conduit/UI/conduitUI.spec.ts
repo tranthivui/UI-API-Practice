@@ -7,7 +7,8 @@ import { ArticleDataRes, UserResponse } from "../../../src/types/conduiType/resp
 import { getToken } from "../../helpers/getToken.helper";
 
 test.describe("Verify UI", () => {
-    test("AE06-UI-01: Verify profile page have article created by API", { tag: ["@ui", "@smoke"] }, async ({ article, workerUser, profilePage }) => {
+    test("AE06-UI-01: Verify profile page have article created by API", { tag: ["@ui", "@smoke"] }, async ({ article, workerUser, profilePage,navBar }) => {
+        await expect(navBar.getUserLink(workerUser.username)).toBeVisible();
         await expect(profilePage.headingName).toHaveText(workerUser.username);
         await expect(profilePage.getArticle(article.data.title)).toBeVisible();
         await expect(profilePage.getAuthor(article.data.title)).toHaveText(workerUser.username);
