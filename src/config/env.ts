@@ -20,7 +20,7 @@ export const ENV = {
 
 export const CONDUIT_ENV = {
     url: requireEnv("CONDUIT_URL"),
-    apiUrl: requireEnv("CONDUIT_API_URL"),
+    apiUrl: `${requireEnv("CONDUIT_API_URL").replace(/\/$/, "")}/`,
     emailPrefix: requireEnv("CONDUIT_EMAIL_PREFIX"),
     password: requireEnv("CONDUIT_PASSWORD"),
 }
