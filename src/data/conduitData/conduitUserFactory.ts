@@ -6,6 +6,6 @@ export function buildWorkerUser(workerIndex:number): ConduitUser {
     return {
         username: name, 
         email: `${name}@example.com`,
-        password: "Test@1234",
+        password: CONDUIT_ENV.password,
     };
 }
