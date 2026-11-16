@@ -31,8 +31,7 @@ test.describe("Verify UI", () => {
 
     test("AE06-UI-03: Verify API use token get from UI", { tag: ["@ui", "@api"] }, async ({ workerUser, loginPage, playwright,navBar }) => {
         await loginPage.goto();
-        const loginResPromise = loginPage.page.waitForResponse((res) => res.url().includes("/users/login") && res.request().method() == "POST");
-        await loginPage.logIn(workerUser.email, workerUser.password);
+        const loginResPromise = await loginPage.logInAndWaitForResponse(workerUser.email, workerUser.password);
         await expect(navBar.getUserLink(workerUser.username)).toBeVisible();
         const loginRes = await loginResPromise;
         expect(loginRes.status()).toBe(200);
@@ -62,7 +61,7 @@ test.describe("Verify UI", () => {
         expect(token).toBeNull();
         await editorPage.goto();
         await expect(page).not.toHaveURL(/\/editor/);
-        await expect(navBar.singInLink).toBeVisible();
+        await expect(navBar.signInLink).toBeVisible();
         await expect(navBar.newArticleLink).toBeHidden();
     })
 })

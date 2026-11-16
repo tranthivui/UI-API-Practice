@@ -8,7 +8,7 @@ export function buildArticle():Article {
         description: `Write new test`,
         body: `- New article\n -Test`,
         tagList: [
-            "#artucle #new"
+            "#artucle#new"
         ]
     }
 }

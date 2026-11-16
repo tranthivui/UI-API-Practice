@@ -89,7 +89,7 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         const data = buildArticle();
         const createArticleRes = await authApi.createArticle(data);
         if (!createArticleRes.ok()) {
-            throw new Error(`Can not create article`);
+            throw new Error(`Can not create article ${createArticleRes.status()} ${createArticleRes.text()}`);
         }
         const createArticleResData: ArticleDataRes = await createArticleRes.json();
         if (!createArticleResData.article.slug) {
