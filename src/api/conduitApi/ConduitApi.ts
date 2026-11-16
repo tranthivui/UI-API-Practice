@@ -1,4 +1,4 @@
-import { APIRequestContext, APIResponse } from "playwright";
+import { APIRequestContext, APIResponse } from "@playwright/test";
 import { ConduitUser } from "../../types/conduiType/NewUser";
 import { CONDUIT_ARTICLE, CONDUIT_GET_USER_API, CONDUIT_LOGIN_API, CONDUIT_REGISTER_API } from "../../config/conduitPaths/paths";
 import { Article } from "../../types/conduiType/Article";

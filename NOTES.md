@@ -905,4 +905,15 @@ https://conduit-api.bondaracademy.com/api/articles/Auto-test-new-92187 (Auto-tes
 - Hiện tại với trang web này thì không thể xóa user, user vẫn tồn tại
 - Nếu là công ty thì có thể
   - Hỏi DEV xem có API xóa user không
-  - Script dọn dẹp data ở DB
+  - Script dọn dẹp data ở DB loc theo tien to ae06_txv
+- Giai phap de khong tao nhieu user
+  - email cố định theo worker (${prefix}_w${parallelIndex}@example.com), fixture login trước, fail thì mới register, password từ .env.
+    - Kết quả: số user luôn bằng số worker (2 user w0/w1), không tăng theo số lần chạy. 
+    - Nhược điểm và rủi ro:
+      - Máy bạn và CI chạy cùng lúc thì cùng dùng w0: bài viết không đụng nhau (title có Date.now()), nhưng các test sửa thông tin user (nếu sau này có) sẽ ảnh hưởng nhau.
+      - Đổi CONDUIT_PASSWORD thì user cũ login fail → register báo 422 → phải đổi CONDUIT_EMAIL_PREFIX.
+      - Dữ liệu dồn lại trên user cố định nếu dọn dẹp lỗi, ví dụ bài bị bỏ lại ở tự kiểm 2. Đây là lý do dùng try/finally hoặc fixture dọn dẹp.
+- So sánh với cách moi lan chay tao 1 user: user mới mỗi lần chạy thì sạch hơn, không đụng nhau, nhưng tạo user mãi mãi vì không xoá được.
+## Ly do chon parallelIndex thay vi workerIndex
+- workerIndex: Không phải “worker số mấy trong số N worker”. Mỗi khi Playwright khởi động lại worker thì số này tăng tiếp, ví dụ khi chuyển sang project khác hoặc sau một test fail. Vì vậy email ..._w${workerIndex} sẽ tăng dần theo thời gian, và hướng “email cố định, không tạo thêm user” bị phá.
+- parallelIndex: Giá trị luôn nằm trong khoảng 0 … workers-1 (2 worker → chỉ có 0 và 1), và worker khởi động lại sẽ dùng lại số cũ.

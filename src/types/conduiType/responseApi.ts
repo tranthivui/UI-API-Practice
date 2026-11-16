@@ -10,12 +10,12 @@ export type UserRegisterFail = {
     }
 }
 
-export type getUserRes = {
+export type GetUserRes = {
     email: string,
     password: string,
 }
 
-export type getUserFail = {
+export type GetUserFail = {
     status: string,
     message: string
 }
@@ -24,8 +24,8 @@ export type ConduitUserData = {
     id?: number,
     email: string,
     username: string,
-    bio: string,
-    image: string,
+    bio: string|null,
+    image: string|null,
     token: string
 }
 

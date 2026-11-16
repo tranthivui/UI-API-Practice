@@ -24,10 +24,20 @@ export class EditorPage{
         await this.description.fill(article.description);
         await this.body.fill(article.body);
         await this.tag.fill(article.tagList.toString());
+        await this.tag.press("Enter");
         await this.publishBtn.click();
     }
 
     async goto(){
         await this.page.goto(this.url);
     }
+
+    async getSlugFromUrl(): Promise<string> {
+    await this.page.waitForURL(/\/article\/.+/);     
+    const slug = new URL(this.page.url()).pathname.split("/").pop();
+    if (!slug) {
+        throw new Error(`Không lấy được slug từ URL: ${this.page.url()}`);
+    }
+    return slug;                                      
+}
 }
