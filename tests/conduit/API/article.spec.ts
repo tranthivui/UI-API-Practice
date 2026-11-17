@@ -21,4 +21,13 @@ test.describe("Verify Article API", () => {
         expect(getByNewSlugResData.article.title).toBe(newData.title);
         expect(getByNewSlugResData.article.body).toBe(newData.body);
     })
+
+    test("AE07-API-02: User B delete article of user A", { tag: "@api"}, async ({ article, authApi,otherApi }) => {
+        const deleteArtRes=await otherApi.deleteArticle(article.slug);
+        expect(deleteArtRes.status()).toBe(403);
+        const getArtRes=await authApi.getArticle(article.slug);
+        expect(getArtRes.status()).toBe(200);
+        const getArtResData:ArticleDataRes=await getArtRes.json();
+        expect(getArtResData.article.title).toBe(article.data.title);
+    })
 })

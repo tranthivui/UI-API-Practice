@@ -1,4 +1,4 @@
-import { APIRequestContext, test as base, expect, Page } from "@playwright/test";
+import { APIRequest, APIRequestContext, test as base, expect, Page } from "@playwright/test";
 import { CONDUIT_ENV } from "../../config/env";
 import { ConduitUser } from "../../types/conduiType/NewUser";
 import { ConduitApi } from "../../api/conduitApi/ConduitApi";
@@ -16,7 +16,10 @@ import { NavBar } from "../../pages/conduit/NavBar.page";
 type WorkerFixtures = {
     workerUser: ConduitUser;
     workerToken: string;
-    authApi: ConduitApi
+    authApi: ConduitApi;
+    otherUser: ConduitUser;
+    otherToken:string;
+    otherApi:ConduitApi
 }
 
 type CreateArticle = {
@@ -37,31 +40,27 @@ type TestFixture = {
     apiWithToken: (token: string) => Promise<ConduitApi>;
 }
 
-export const test = base.extend<TestFixture, WorkerFixtures>({
-    workerUser: [async ({ playwright }, use, workerInfo) => {
-        const ctx = await playwright.request.newContext({
+async function ensureUser(request:APIRequest,user:ConduitUser) {
+    const ctx = await request.newContext({
             baseURL: CONDUIT_ENV.apiUrl
         });
         const api = new ConduitApi(ctx);
-        const user = buildWorkerUser(workerInfo.parallelIndex);
         const loginRes = await api.login(user);
         if (!loginRes.ok()) {
             const regRes = await api.registerUser(user);
             if (!regRes.ok()) {
                 throw new Error(`Register failed: ${regRes.status()} ${await regRes.text()}`);
             }
-            console.log(`worker ${workerInfo.parallelIndex} registered ${user.username}`);
         }
         await ctx.dispose();
-        await use(user);
-    }, { scope: "worker" }],
+}
 
-    workerToken: [async ({ playwright, workerUser }, use) => {
-        const ctx = await playwright.request.newContext({
+async function loginToken(request:APIRequest,user:ConduitUser):Promise<string> {
+     const ctx = await request.newContext({
             baseURL: CONDUIT_ENV.apiUrl
         });
         const api = new ConduitApi(ctx);
-        const loginRes = await api.login(workerUser);
+        const loginRes = await api.login(user);
         if (!loginRes.ok()) {
             throw new Error(`Login failed: ${loginRes.status()} ${await loginRes.text()}`)
         }
@@ -70,8 +69,20 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         if (!token) {
             throw new Error(`Login success but response not have token`)
         }
-        await use(token);
+        return token;
         await ctx.dispose();
+}
+
+export const test = base.extend<TestFixture, WorkerFixtures>({
+    workerUser: [async ({ playwright }, use, workerInfo) => {
+        const user = buildWorkerUser(workerInfo.parallelIndex);
+        await ensureUser(playwright.request,user);
+        await use(user);
+    }, { scope: "worker" }],
+
+    workerToken: [async ({ playwright, workerUser }, use) => {
+        const token= await loginToken(playwright.request,workerUser);
+        await use(token);
     }, { scope: "worker" }],
 
     authApi: [async ({ playwright, workerToken }, use) => {
@@ -79,6 +90,28 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
             baseURL: CONDUIT_ENV.apiUrl,
             extraHTTPHeaders: {
                 Authorization: `Token ${workerToken}`
+            }
+        });
+        await use(new ConduitApi(ctx));
+        await ctx.dispose();
+    }, { scope: "worker" }],
+
+    otherUser: [async ({ playwright }, use, workerInfo) => {
+        const user = buildWorkerUser(workerInfo.parallelIndex,"_b");
+        await ensureUser(playwright.request,user);
+        await use(user);
+    }, { scope: "worker" }],
+
+    otherToken: [async ({ playwright, otherUser }, use) => {
+        const token=await loginToken(playwright.request,otherUser);
+        await use(token);
+    }, { scope: "worker" }],
+
+    otherApi: [async ({ playwright, otherToken }, use) => {
+        const ctx = await playwright.request.newContext({
+            baseURL: CONDUIT_ENV.apiUrl,
+            extraHTTPHeaders: {
+                Authorization: `Token ${otherToken}`
             }
         });
         await use(new ConduitApi(ctx));
