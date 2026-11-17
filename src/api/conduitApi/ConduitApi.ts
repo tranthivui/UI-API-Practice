@@ -58,4 +58,14 @@ export class ConduitApi {
         const deleteArticleRes = await this.request.delete(`${CONDUIT_ARTICLE}/${slug}`);
         return deleteArticleRes;
     }
+
+    async editArticle(article:Article,oldslug:string){
+        const editPath=`${CONDUIT_ARTICLE}/${oldslug}`;
+        const editRes=await this.request.put(editPath,{
+            data:{
+                article: article
+            }
+        });
+        return editRes;
+    }
 }

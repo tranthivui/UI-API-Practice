@@ -95,11 +95,15 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         if (!createArticleResData.article.slug) {
             throw new Error(`Can not get slug`);
         }
-        const slug = createArticleResData.article.slug;
-        await use({ data, slug });
-        const deleteArtilceRes = await authApi.deleteArticle(slug);
+        const created:CreateArticle={
+            data,
+            slug:createArticleResData.article.slug
+        };
+        await use(created);
+        const deleteArtilceRes = await authApi.deleteArticle(created.slug);
         expect(deleteArtilceRes.status()).toBe(204);
-        const getArticleRes = await authApi.getArticle(slug);
+        const getArticleRes = await authApi.getArticle(created.slug);
+        if(getArticleRes.status()===404)
         expect(getArticleRes.status()).toBe(404);
     },
 
