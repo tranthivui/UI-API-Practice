@@ -1001,6 +1001,82 @@ https://conduit-api.bondaracademy.com/api/articles/test-three-edit-92187/comment
 - Status: 200
 - Comment có trường id
 
+### NOTE: Comment trả về theo user, chỉ nhìn thấy comment của chính mình, không nhìn thấy được comment của người khác
+- A xem bài viêt
+```json
+{
+    "comments": [
+        {
+            "id": 109674,
+            "createdAt": "2026-11-18T16:42:56.870Z",
+            "updatedAt": "2026-11-18T16:42:56.870Z",
+            "body": "comment 1",
+            "author": {
+                "username": "AutoPlaywright",
+                "bio": null,
+                "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        },
+        {
+            "id": 109675,
+            "createdAt": "2026-11-18T16:43:02.489Z",
+            "updatedAt": "2026-11-18T16:43:02.489Z",
+            "body": "comment 2",
+            "author": {
+                "username": "AutoPlaywright",
+                "bio": null,
+                "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        },
+        {
+            "id": 109676,
+            "createdAt": "2026-11-18T16:49:23.045Z",
+            "updatedAt": "2026-11-18T16:49:23.045Z",
+            "body": "comment 1",
+            "author": {
+                "username": "AutoPlaywright",
+                "bio": null,
+                "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        }
+    ]
+}
+```
+- B xem bài viết
+```json
+{
+    "comments": [
+        {
+            "id": 109677,
+            "createdAt": "2026-11-18T16:53:46.971Z",
+            "updatedAt": "2026-11-18T16:53:46.971Z",
+            "body": "comment auto-one 1",
+            "author": {
+                "username": "auto-one",
+                "bio": null,
+                "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        },
+        {
+            "id": 109678,
+            "createdAt": "2026-11-18T16:53:54.700Z",
+            "updatedAt": "2026-11-18T16:53:54.700Z",
+            "body": "comment auto-one 2",
+            "author": {
+                "username": "auto-one",
+                "bio": null,
+                "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        }
+    ]
+}
+```
+
 ## Yêu thích
 ### Bài viết của người khác
 - Method: Post
