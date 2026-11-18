@@ -3,6 +3,7 @@ import { CONDUIT_ENV } from "../../../src/config/env";
 import { buildArticle } from "../../../src/data/conduitData/articleFactory";
 import { TOKEN_KEY } from "../../../src/data/conduitData/data";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture"
+import { ArticleDetailPage } from "../../../src/pages/conduit/ArticleDetailPage.page";
 import { ArticleDataRes, UserResponse } from "../../../src/types/conduiType/responseApi";
 import { getToken } from "../../helpers/getToken.helper";
 
@@ -28,7 +29,7 @@ test.describe("Verify UI", () => {
         expect(getArticleResData.article.tagList).toEqual(newArticle.tagList);
     })
 
-    test("AE06-UI-03: Verify API use token get from UI", { tag: ["@ui", "@api"] }, async ({ workerUser, loginPage, playwright,navBar }) => {
+    test("AE06-UI-03: Verify API use token get from UI", { tag: ["@ui", "@api"] }, async ({ workerUser, loginPage, playwright, navBar }) => {
         await loginPage.goto();
         const loginResPromise = loginPage.page.waitForResponse((res) => res.url().includes("/users/login") && res.request().method() == "POST");
         await loginPage.logIn(workerUser.email, workerUser.password);
@@ -37,7 +38,7 @@ test.describe("Verify UI", () => {
         expect(loginRes.status()).toBe(200);
         const loginResData: UserResponse = await loginRes.json();
         const tokenFromRes = loginResData.user.token;
-        const tokenFromLocalStorage = await getToken(loginPage.page,TOKEN_KEY);
+        const tokenFromLocalStorage = await getToken(loginPage.page, TOKEN_KEY);
         expect(tokenFromLocalStorage).toBe(tokenFromRes);
         const request = await playwright.request.newContext({
             baseURL: CONDUIT_ENV.apiUrl,
@@ -51,17 +52,35 @@ test.describe("Verify UI", () => {
         expect(getUserResData.user.username).toBe(workerUser.username);
     })
 
-    test("AE06-UI-04: Verify logout delete token", { tag: ["@ui"] }, async ({ workerUser, loginPage, navBar, settingPage, page,editorPage }) => {
+    test("AE06-UI-04: Verify logout delete token", { tag: ["@ui"] }, async ({ workerUser, loginPage, navBar, settingPage, page, editorPage }) => {
         await loginPage.goto();
         await loginPage.logIn(workerUser.email, workerUser.password);
         await expect(navBar.settingLink).toBeVisible();
         await navBar.clickSettingLink();
         await settingPage.clickLogout();
-        const token = await getToken(settingPage.page,TOKEN_KEY);
+        const token = await getToken(settingPage.page, TOKEN_KEY);
         expect(token).toBeNull();
         await editorPage.goto();
         await expect(page).not.toHaveURL(/\/editor/);
         await expect(navBar.singInLink).toBeVisible();
         await expect(navBar.newArticleLink).toBeHidden();
+    })
+
+    test("AE07-UI-01: B write comment for article of A", async ({ article, ortherPage, otherUser, workerUser, loggedInPage }) => {
+        const articlePageW = new ArticleDetailPage(loggedInPage);
+        const articlePageB = new ArticleDetailPage(ortherPage);
+        await articlePageB.goto(article.slug);
+        await articlePageW.goto(article.slug);
+        await expect(articlePageW.getHeaderTitle(article.data.title)).toBeVisible();
+        await expect(articlePageB.getHeaderTitle(article.data.title)).toBeVisible();
+        const commentDetail = `Comment by ${otherUser.username} at ${Date.now()}`;
+        await articlePageB.writeComment(commentDetail);
+        const commentBLocator = articlePageB.getComment(commentDetail, otherUser.username);
+        await expect(commentBLocator).toBeVisible();
+        await expect(articlePageB.getDeleteBtn(commentBLocator)).toBeVisible();
+        await articlePageW.reloadPage();
+        await expect(articlePageW.getHeaderTitle(article.data.title)).toBeVisible();
+        const commentLocator = articlePageW.getComment(commentDetail, otherUser.username);
+        await expect(commentLocator).not.toBeVisible();
     })
 })

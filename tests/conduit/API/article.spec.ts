@@ -1,3 +1,4 @@
+import { responseMess } from "../../../src/data/conduitData/message";
 import { registerErrorCases } from "../../../src/data/conduitData/registerErrorCase";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture";
 import { ArticleDataRes, ErrorRegisterResponse, writeCommentRestData } from "../../../src/types/conduiType/responseApi";
@@ -70,4 +71,11 @@ test.describe("Verify Article API", () => {
             expect(registerResData.errors[userData.field]).toContain(userData.message);
         })
     }
+
+    test("Verify case register with exsits email",{tag:"@api"},async({workerUser,authApi})=>{
+        const registerRes=await authApi.registerUser(workerUser);
+        expect(registerRes.status()).toBe(422);
+        const registerResData:ErrorRegisterResponse=await registerRes.json();
+        expect(registerResData.errors["email"]).toContain(responseMess.registerFail);
+    })
 })

@@ -12,14 +12,15 @@ import { EditorPage } from "../../pages/conduit/EditorPage.page";
 import { LoginPage } from "../../pages/conduit/LoginPage.page";
 import { SettingPage } from "../../pages/conduit/SettingPage.page";
 import { NavBar } from "../../pages/conduit/NavBar.page";
+import { ArticleDetailPage } from "../../pages/conduit/ArticleDetailPage.page";
 
 type WorkerFixtures = {
     workerUser: ConduitUser;
     workerToken: string;
     authApi: ConduitApi;
     otherUser: ConduitUser;
-    otherToken:string;
-    otherApi:ConduitApi
+    otherToken: string;
+    otherApi: ConduitApi
 }
 
 type CreateArticle = {
@@ -38,50 +39,52 @@ type TestFixture = {
     createdSlugs: string[];
     guestApi: ConduitApi;
     apiWithToken: (token: string) => Promise<ConduitApi>;
+    ortherPage: Page;
+    articleDetailPage: ArticleDetailPage;
 }
 
-async function ensureUser(request:APIRequest,user:ConduitUser) {
+async function ensureUser(request: APIRequest, user: ConduitUser) {
     const ctx = await request.newContext({
-            baseURL: CONDUIT_ENV.apiUrl
-        });
-        const api = new ConduitApi(ctx);
-        const loginRes = await api.login(user);
-        if (!loginRes.ok()) {
-            const regRes = await api.registerUser(user);
-            if (!regRes.ok()) {
-                throw new Error(`Register failed: ${regRes.status()} ${await regRes.text()}`);
-            }
+        baseURL: CONDUIT_ENV.apiUrl
+    });
+    const api = new ConduitApi(ctx);
+    const loginRes = await api.login(user);
+    if (!loginRes.ok()) {
+        const regRes = await api.registerUser(user);
+        if (!regRes.ok()) {
+            throw new Error(`Register failed: ${regRes.status()} ${await regRes.text()}`);
         }
-        await ctx.dispose();
+    }
+    await ctx.dispose();
 }
 
-async function loginToken(request:APIRequest,user:ConduitUser):Promise<string> {
-     const ctx = await request.newContext({
-            baseURL: CONDUIT_ENV.apiUrl
-        });
-        const api = new ConduitApi(ctx);
-        const loginRes = await api.login(user);
-        if (!loginRes.ok()) {
-            throw new Error(`Login failed: ${loginRes.status()} ${await loginRes.text()}`)
-        }
-        const loginResData: UserResponse = await loginRes.json();
-        const token = loginResData.user.token;
-        if (!token) {
-            throw new Error(`Login success but response not have token`)
-        }
-        return token;
-        await ctx.dispose();
+async function loginToken(request: APIRequest, user: ConduitUser): Promise<string> {
+    const ctx = await request.newContext({
+        baseURL: CONDUIT_ENV.apiUrl
+    });
+    const api = new ConduitApi(ctx);
+    const loginRes = await api.login(user);
+    if (!loginRes.ok()) {
+        throw new Error(`Login failed: ${loginRes.status()} ${await loginRes.text()}`)
+    }
+    const loginResData: UserResponse = await loginRes.json();
+    const token = loginResData.user.token;
+    if (!token) {
+        throw new Error(`Login success but response not have token`)
+    }
+    return token;
+    await ctx.dispose();
 }
 
 export const test = base.extend<TestFixture, WorkerFixtures>({
     workerUser: [async ({ playwright }, use, workerInfo) => {
         const user = buildWorkerUser(workerInfo.parallelIndex);
-        await ensureUser(playwright.request,user);
+        await ensureUser(playwright.request, user);
         await use(user);
     }, { scope: "worker" }],
 
     workerToken: [async ({ playwright, workerUser }, use) => {
-        const token= await loginToken(playwright.request,workerUser);
+        const token = await loginToken(playwright.request, workerUser);
         await use(token);
     }, { scope: "worker" }],
 
@@ -97,13 +100,13 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
     }, { scope: "worker" }],
 
     otherUser: [async ({ playwright }, use, workerInfo) => {
-        const user = buildWorkerUser(workerInfo.parallelIndex,"_b");
-        await ensureUser(playwright.request,user);
+        const user = buildWorkerUser(workerInfo.parallelIndex, "_b");
+        await ensureUser(playwright.request, user);
         await use(user);
     }, { scope: "worker" }],
 
     otherToken: [async ({ playwright, otherUser }, use) => {
-        const token=await loginToken(playwright.request,otherUser);
+        const token = await loginToken(playwright.request, otherUser);
         await use(token);
     }, { scope: "worker" }],
 
@@ -128,16 +131,16 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         if (!createArticleResData.article.slug) {
             throw new Error(`Can not get slug`);
         }
-        const created:CreateArticle={
+        const created: CreateArticle = {
             data,
-            slug:createArticleResData.article.slug
+            slug: createArticleResData.article.slug
         };
         await use(created);
         const deleteArtilceRes = await authApi.deleteArticle(created.slug);
         expect(deleteArtilceRes.status()).toBe(204);
         const getArticleRes = await authApi.getArticle(created.slug);
-        if(getArticleRes.status()===404)
-        expect(getArticleRes.status()).toBe(404);
+        if (getArticleRes.status() === 404)
+            expect(getArticleRes.status()).toBe(404);
     },
 
     loggedInPage: async ({ page, workerToken }, use) => {
@@ -189,17 +192,33 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
     },
 
     apiWithToken: async ({ playwright }, use) => {
-    const contexts: APIRequestContext[] = [];
-    await use(async (token) => {
-        const ctx = await playwright.request.newContext({
-            baseURL: CONDUIT_ENV.apiUrl,
-            extraHTTPHeaders: { Authorization: `Token ${token}` },
+        const contexts: APIRequestContext[] = [];
+        await use(async (token) => {
+            const ctx = await playwright.request.newContext({
+                baseURL: CONDUIT_ENV.apiUrl,
+                extraHTTPHeaders: { Authorization: `Token ${token}` },
+            });
+            contexts.push(ctx);
+            return new ConduitApi(ctx);
         });
-        contexts.push(ctx);
-        return new ConduitApi(ctx);
-    });
-    for (const ctx of contexts) await ctx.dispose();
-},
+        for (const ctx of contexts) await ctx.dispose();
+    },
+
+    ortherPage: async ({ browser, otherToken }, use) => {
+        const context = await browser.newContext({ baseURL: CONDUIT_ENV.url });
+        await context.addInitScript(
+            ({ key, token }) => localStorage.setItem(key, token),
+            { key: TOKEN_KEY, token: otherToken }
+        );
+        const page = await context.newPage();
+        await use(page);
+        await context.close();
+    },
+
+    articleDetailPage: async({page},use)=>{
+        const articleDetailPage=new ArticleDetailPage(page);
+        await use(articleDetailPage);
+    }
 });
 
 export { expect } from "@playwright/test"
