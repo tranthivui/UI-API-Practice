@@ -40,9 +40,9 @@ export class ConduitApi {
         return getCurrentUserRes;
     }
 
-    async createArticle(article:Article) {
-        const createArticleRes = await this.request.post(CONDUIT_ARTICLE,{
-            data:{
+    async createArticle(article: Article) {
+        const createArticleRes = await this.request.post(CONDUIT_ARTICLE, {
+            data: {
                 article: article
             }
         });
@@ -54,18 +54,43 @@ export class ConduitApi {
         return getArticleRes;
     }
 
-    async deleteArticle(slug:string){
+    async deleteArticle(slug: string) {
         const deleteArticleRes = await this.request.delete(`${CONDUIT_ARTICLE}/${slug}`);
         return deleteArticleRes;
     }
 
-    async editArticle(article:Article,oldslug:string){
-        const editPath=`${CONDUIT_ARTICLE}/${oldslug}`;
-        const editRes=await this.request.put(editPath,{
-            data:{
+    async editArticle(article: Article, oldslug: string) {
+        const editPath = `${CONDUIT_ARTICLE}/${oldslug}`;
+        const editRes = await this.request.put(editPath, {
+            data: {
                 article: article
             }
         });
         return editRes;
+    }
+
+    async writeComment(slug: string, comment: string) {
+        const writeComemntPath = `${CONDUIT_ARTICLE}/${slug}/comments`;
+        console.log(writeComemntPath);
+        const writeCommentRes = await this.request.post(writeComemntPath, {
+            data: {
+                comment: {
+                    body: comment
+                }
+            }
+        });
+        return writeCommentRes;
+    }
+
+    async deleteComment(slug: string, id: number) {
+        const deleteComemntPath = `${CONDUIT_ARTICLE}/${slug}/comments/${id}`;
+        const deleteCommentRes = await this.request.delete(deleteComemntPath);
+        return deleteCommentRes;
+    }
+
+    async getComments(slug: string) {
+        const getComemntPath = `${CONDUIT_ARTICLE}/${slug}/comments`;
+        const getCommentRes = await this.request.get(getComemntPath);
+        return getCommentRes;
     }
 }

@@ -1,4 +1,5 @@
-import { Article } from "./Article"
+import { Article } from "./Article";
+import {Comment} from "./Comment"
 
 export type UserResponse = {
     user: ConduitUserData
@@ -24,8 +25,8 @@ export type ConduitUserData = {
     id?: number,
     email: string,
     username: string,
-    bio: string|null,
-    image: string|null,
+    bio: string | null,
+    image: string | null,
     token: string
 }
 
@@ -47,3 +48,12 @@ export type ArticleDataRes = {
         }
     }
 }
+
+export type getCommentRestData = {
+    comments: Comment[];
+}
+
+export type writeCommentRestData = {
+    comment: Comment;
+}
+
