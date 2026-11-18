@@ -57,3 +57,6 @@ export type writeCommentRestData = {
     comment: Comment;
 }
 
+export type ErrorRegisterResponse = {
+    errors: Record<string, string[]>;
+};

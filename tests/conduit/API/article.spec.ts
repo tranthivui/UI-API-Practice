@@ -1,5 +1,6 @@
+import { registerErrorCases } from "../../../src/data/conduitData/registerErrorCase";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture";
-import { ArticleDataRes, CommentDataRes, getCommentRestData, writeCommentRestData } from "../../../src/types/conduiType/responseApi";
+import { ArticleDataRes, ErrorRegisterResponse, writeCommentRestData } from "../../../src/types/conduiType/responseApi";
 import { findComment } from "../../helpers/findComment.helper";
 
 test.describe("Verify Article API", () => {
@@ -60,4 +61,13 @@ test.describe("Verify Article API", () => {
         const commentAfterDelete=await findComment(article.slug,authApi,commentId);
         expect(commentAfterDelete).not.toBeDefined();
     })
+
+    for(const userData of registerErrorCases){
+        test(`Verify ${userData.name}`,{tag:"@api"}, async({authApi})=>{
+            const registerRespone=await authApi.registerUser(userData.user);
+            expect(registerRespone.status()).toBe(userData.status);
+            const registerResData:ErrorRegisterResponse=await registerRespone.json();
+            expect(registerResData.errors[userData.field]).toContain(userData.message);
+        })
+    }
 })
