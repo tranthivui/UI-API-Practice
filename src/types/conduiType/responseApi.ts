@@ -39,6 +39,7 @@ export type ArticleDataRes = {
         tagList: string[],
         createdAt: string,
         updateAt: string,
+        favorited: boolean;
         favoritesCount: number,
         author: {
             username: string,

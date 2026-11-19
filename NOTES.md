@@ -1439,3 +1439,45 @@ https://conduit-api.bondaracademy.com/api/articles/test-three-edit-92187/comment
     ]
 }
 ```
+## Following flow
+### Follow
+- URL: https://conduit-api.bondaracademy.com/api/profiles/<username>/follow
+- Method: POST
+- Status: 200
+- Request: {}
+- Response
+```json
+{
+    "profile": {
+        "username": "AutoPlaywright",
+        "bio": null,
+        "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+        "following": true
+    }
+}
+```
+
+### Unfollow
+- URL: https://conduit-api.bondaracademy.com/api/profiles/<username>t/follow
+- Method: Delete
+- Status: 200
+- Request
+```json
+{
+    "username": "AutoPlaywright",
+    "bio": null,
+    "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+    "following": false
+}
+```
+- Response
+```json
+{
+    "profile": {
+        "username": "AutoPlaywright",
+        "bio": null,
+        "image": "https://conduit-api.bondaracademy.com/images/smiley-cyrus.jpeg",
+        "following": false
+    }
+}
+```
