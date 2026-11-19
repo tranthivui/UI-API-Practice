@@ -218,7 +218,7 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
     articleDetailPage: async({page},use)=>{
         const articleDetailPage=new ArticleDetailPage(page);
         await use(articleDetailPage);
-    }
+    },
 });
 
 export { expect } from "@playwright/test"

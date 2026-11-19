@@ -66,21 +66,51 @@ test.describe("Verify UI", () => {
         await expect(navBar.newArticleLink).toBeHidden();
     })
 
-    test("AE07-UI-01: B write comment for article of A", async ({ article, ortherPage, otherUser, workerUser, loggedInPage }) => {
-        const articlePageW = new ArticleDetailPage(loggedInPage);
+    test("AE07-UI-01: B write comment for article of A", { tag: "@ui" }, async ({ article, ortherPage, otherUser, loggedInPage }) => {
         const articlePageB = new ArticleDetailPage(ortherPage);
         await articlePageB.goto(article.slug);
-        await articlePageW.goto(article.slug);
-        await expect(articlePageW.getHeaderTitle(article.data.title)).toBeVisible();
         await expect(articlePageB.getHeaderTitle(article.data.title)).toBeVisible();
         const commentDetail = `Comment by ${otherUser.username} at ${Date.now()}`;
         await articlePageB.writeComment(commentDetail);
         const commentBLocator = articlePageB.getComment(commentDetail, otherUser.username);
         await expect(commentBLocator).toBeVisible();
         await expect(articlePageB.getDeleteBtn(commentBLocator)).toBeVisible();
+        const articlePageW = new ArticleDetailPage(loggedInPage);
+        await articlePageW.goto(article.slug);
+        await expect(articlePageW.getHeaderTitle(article.data.title)).toBeVisible();
         await articlePageW.reloadPage();
         await expect(articlePageW.getHeaderTitle(article.data.title)).toBeVisible();
         const commentLocator = articlePageW.getComment(commentDetail, otherUser.username);
         await expect(commentLocator).not.toBeVisible();
+    })
+
+    test("AE07-UI-02: B like for article of A", { tag: ["@ui", "@api"] }, async ({ article, otherApi, ortherPage, authApi, workerUser }) => {
+        const getArticleRes = await authApi.getArticle(article.slug);
+        expect(getArticleRes.status()).toBe(200);
+        const getArticleResData: ArticleDataRes = await getArticleRes.json();
+        const before = getArticleResData.article.favoritesCount;
+        const followRes = await otherApi.followAuthor(workerUser.username);
+        expect(followRes.status()).toBe(200);
+        const artileDetailPage = new ArticleDetailPage(ortherPage);
+        await artileDetailPage.goto(article.slug);
+        await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
+        const favRes=await artileDetailPage.clickLikeAndWait();
+        expect(favRes.status()).toBe(200);
+        const res = await otherApi.getArticle(article.slug);
+        expect(res.status()).toBe(200);
+        const data: ArticleDataRes = await res.json();
+        expect(data.article.favorited).toBe(true);
+        await expect.poll(async () => {
+            const res = await authApi.getArticle(article.slug);
+            if (!res.ok()) throw new Error(`GET article ${res.status()}`);
+            const data: ArticleDataRes = await res.json();
+            return data.article.favoritesCount;
+        }, {
+            message: "favoritesCount should increase after B clicks favorite",
+            timeout: 10_000,
+        }).toBe(before + 1);
+        await artileDetailPage.reloadPage();
+        await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
+        await expect(artileDetailPage.likedBtn).toBeVisible();
     })
 })
