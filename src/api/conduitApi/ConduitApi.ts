@@ -71,7 +71,6 @@ export class ConduitApi {
 
     async writeComment(slug: string, comment: string) {
         const writeComemntPath = `${CONDUIT_ARTICLE}/${slug}/comments`;
-        console.log(writeComemntPath);
         const writeCommentRes = await this.request.post(writeComemntPath, {
             data: {
                 comment: {
@@ -94,11 +93,24 @@ export class ConduitApi {
         return getCommentRes;
     }
 
-    async followAuthor(username:string){
-        const followPath=`${CONDUIT_PROFILE}/${username}/follow`;
-        const followRes=await this.request.post(followPath,{
-            data:{}
+    async followAuthor(username: string) {
+        const followPath = `${CONDUIT_PROFILE}/${username}/follow`;
+        const followRes = await this.request.post(followPath, {
+            data: {}
         });
         return followRes;
+    }
+
+    async unFollowAuthor(username: string, bio: string, image: string) {
+        const unFollowPath = `${CONDUIT_PROFILE}/${username}/follow`;
+        const unFollowRes = await this.request.delete(unFollowPath, {
+            data: {
+                username: username,
+                bio: bio,
+                image: image,
+                following: false
+            }
+        });
+        return unFollowRes;
     }
 }

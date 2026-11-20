@@ -1,5 +1,5 @@
 import { Article } from "./Article";
-import {Comment} from "./Comment"
+import { Comment } from "./Comment"
 
 export type UserResponse = {
     user: ConduitUserData
@@ -34,7 +34,7 @@ export type ArticleDataRes = {
     article: Artice
 }
 
-export type ArticlesListRes={
+export type ArticlesListRes = {
     articles: Artice[];
 }
 
@@ -50,20 +50,29 @@ export type ErrorRegisterResponse = {
     errors: Record<string, string[]>;
 };
 
-export type Artice={
+export type Artice = {
     slug: string,
-        title: string,
-        description: string,
-        body: string,
-        tagList: string[],
-        createdAt: string,
-        updateAt: string,
-        favorited: boolean;
-        favoritesCount: number,
-        author: {
-            username: string,
-            bio: string,
-            image: string,
-            following: boolean
-        }
+    title: string,
+    description: string,
+    body: string,
+    tagList: string[],
+    createdAt: string,
+    updateAt: string,
+    favorited: boolean;
+    favoritesCount: number,
+    author: {
+        username: string,
+        bio: string,
+        image: string,
+        following: boolean
+    }
+}
+
+export type FollowResData = {
+    profile: {
+        username: string,
+        bio: string,
+        image: string,
+        following: boolean
+    }
 }

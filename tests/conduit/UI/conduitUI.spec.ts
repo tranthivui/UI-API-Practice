@@ -6,7 +6,7 @@ import { UIErrorMess } from "../../../src/data/conduitData/message";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture"
 import { ArticleDetailPage } from "../../../src/pages/conduit/ArticleDetailPage.page";
 import { HomePage } from "../../../src/pages/conduit/HomePage.page";
-import { ArticleDataRes, ArticlesListRes, UserResponse } from "../../../src/types/conduiType/responseApi";
+import { ArticleDataRes, ArticlesListRes, FollowResData, UserResponse } from "../../../src/types/conduiType/responseApi";
 import { getToken } from "../../helpers/getToken.helper";
 
 test.describe("Verify UI", () => {
@@ -86,13 +86,12 @@ test.describe("Verify UI", () => {
         await expect(commentLocator).not.toBeVisible();
     })
 
-    test("AE07-UI-02: B like for article of A", { tag: ["@ui", "@api"] }, async ({ article, otherApi, ortherPage, authApi, workerUser }) => {
+    test("AE07-UI-02: B like for article of A", { tag: ["@ui", "@api"] }, async ({ article, otherApi, ortherPage, authApi, followedAuthor }) => {
         const getArticleRes = await authApi.getArticle(article.slug);
         expect(getArticleRes.status()).toBe(200);
         const getArticleResData: ArticleDataRes = await getArticleRes.json();
         const before = getArticleResData.article.favoritesCount;
-        const followRes = await otherApi.followAuthor(workerUser.username);
-        expect(followRes.status()).toBe(200);
+
         const artileDetailPage = new ArticleDetailPage(ortherPage);
         await artileDetailPage.goto(article.slug);
         await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
@@ -114,12 +113,10 @@ test.describe("Verify UI", () => {
         await artileDetailPage.reloadPage();
         await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
         await expect(artileDetailPage.likedBtn).toBeVisible();
-        const unFollowRes = await otherApi.followAuthor(workerUser.username);
-        expect(unFollowRes.status()).toBe(200);
     })
 
     test("AE07-UI-03: Global Feed API 500", { tag: ["@ui"] }, async ({ page }) => {
-        await page.route(/\api\/articles\?/, (route) =>
+        await page.route(/\/api\/articles\?/, (route) =>
             route.fulfill({
                 status: 500,
                 json: {
@@ -132,7 +129,7 @@ test.describe("Verify UI", () => {
         const homePage = new HomePage(page);
         await homePage.goto();
         expect((await fesRes).status()).toBe(500);
-        await expect(homePage.loadingPage).toHaveText(UIErrorMess.apiResponse500);
+        await expect(homePage.listArtice).toHaveText(UIErrorMess.apiResponse500);
     })
 
     test("AR07-UI-04: Patch first article title", { tag: "@ui" }, async ({ article, loggedInPage }) => {

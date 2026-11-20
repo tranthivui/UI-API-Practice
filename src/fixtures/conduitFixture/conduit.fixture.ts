@@ -3,7 +3,7 @@ import { CONDUIT_ENV } from "../../config/env";
 import { ConduitUser } from "../../types/conduiType/NewUser";
 import { ConduitApi } from "../../api/conduitApi/ConduitApi";
 import { buildWorkerUser } from "../../data/conduitData/conduitUserFactory";
-import { ArticleDataRes, UserResponse } from "../../types/conduiType/responseApi";
+import { ArticleDataRes, FollowResData, UserResponse } from "../../types/conduiType/responseApi";
 import { Article } from "../../types/conduiType/Article";
 import { buildArticle } from "../../data/conduitData/articleFactory";
 import { TOKEN_KEY } from "../../data/conduitData/data";
@@ -43,6 +43,7 @@ type TestFixture = {
     ortherPage: Page;
     articleDetailPage: ArticleDetailPage;
     homePage: HomePage;
+    followedAuthor: string;
 }
 
 async function ensureUser(request: APIRequest, user: ConduitUser) {
@@ -225,6 +226,15 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         const homePage = new HomePage(page);
         await use(homePage);
     },
+
+    followedAuthor: async ({ otherApi, workerUser }, use) => {
+    const followRes = await otherApi.followAuthor(workerUser.username);
+    if (!followRes.ok()) throw new Error(`Follow failed: ${followRes.status()} ${await followRes.text()}`);
+    const followResData:FollowResData=await followRes.json();
+    await use(workerUser.username);
+    const unfollowRes = await otherApi.unFollowAuthor(workerUser.username,followResData.profile.bio,followResData.profile.image);
+    expect(unfollowRes.status()).toBe(200);
+},
 });
 
 export { expect } from "@playwright/test"

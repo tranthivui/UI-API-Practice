@@ -5,13 +5,11 @@ export class HomePage {
     private readonly url = "/";
     readonly page: Page;
     readonly listArtice: Locator;
-    readonly loadingPage: Locator;
     readonly articleTitles: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.listArtice = this.page.locator(".article-preview");
-        this.loadingPage = this.page.locator(".article-preview");
         this.articleTitles = this.listArtice.getByRole("heading");
     }
 
