@@ -101,15 +101,10 @@ export class ConduitApi {
         return followRes;
     }
 
-    async unFollowAuthor(username: string, bio: string, image: string) {
+    async unFollowAuthor(username: string) {
         const unFollowPath = `${CONDUIT_PROFILE}/${username}/follow`;
         const unFollowRes = await this.request.delete(unFollowPath, {
-            data: {
-                username: username,
-                bio: bio,
-                image: image,
-                following: false
-            }
+            data: {}
         });
         return unFollowRes;
     }

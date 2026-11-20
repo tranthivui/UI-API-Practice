@@ -232,8 +232,10 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
     if (!followRes.ok()) throw new Error(`Follow failed: ${followRes.status()} ${await followRes.text()}`);
     const followResData:FollowResData=await followRes.json();
     await use(workerUser.username);
-    const unfollowRes = await otherApi.unFollowAuthor(workerUser.username,followResData.profile.bio,followResData.profile.image);
+    const unfollowRes = await otherApi.unFollowAuthor(workerUser.username);
     expect(unfollowRes.status()).toBe(200);
+    const unfollowResData:FollowResData=await unfollowRes.json();
+    expect(unfollowResData.profile.following).toBe(false);
 },
 });
 

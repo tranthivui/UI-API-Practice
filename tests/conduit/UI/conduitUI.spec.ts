@@ -6,7 +6,7 @@ import { UIErrorMess } from "../../../src/data/conduitData/message";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture"
 import { ArticleDetailPage } from "../../../src/pages/conduit/ArticleDetailPage.page";
 import { HomePage } from "../../../src/pages/conduit/HomePage.page";
-import { ArticleDataRes, ArticlesListRes, FollowResData, UserResponse } from "../../../src/types/conduiType/responseApi";
+import { ArticleDataRes, ArticlesListRes, UserResponse } from "../../../src/types/conduiType/responseApi";
 import { getToken } from "../../helpers/getToken.helper";
 
 test.describe("Verify UI", () => {
@@ -91,7 +91,6 @@ test.describe("Verify UI", () => {
         expect(getArticleRes.status()).toBe(200);
         const getArticleResData: ArticleDataRes = await getArticleRes.json();
         const before = getArticleResData.article.favoritesCount;
-
         const artileDetailPage = new ArticleDetailPage(ortherPage);
         await artileDetailPage.goto(article.slug);
         await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
@@ -129,7 +128,8 @@ test.describe("Verify UI", () => {
         const homePage = new HomePage(page);
         await homePage.goto();
         expect((await fesRes).status()).toBe(500);
-        await expect(homePage.listArtice).toHaveText(UIErrorMess.apiResponse500);
+        await expect(homePage.loadingMessage).toHaveText(UIErrorMess.apiResponse500);
+        await expect(homePage.listArtice).toHaveCount(1);
     })
 
     test("AR07-UI-04: Patch first article title", { tag: "@ui" }, async ({ article, loggedInPage }) => {
