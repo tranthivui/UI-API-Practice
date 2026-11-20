@@ -2,9 +2,11 @@ import { CONDUIT_GET_USER_API } from "../../../src/config/conduitPaths/paths";
 import { CONDUIT_ENV } from "../../../src/config/env";
 import { buildArticle } from "../../../src/data/conduitData/articleFactory";
 import { TOKEN_KEY } from "../../../src/data/conduitData/data";
+import { UIErrorMess } from "../../../src/data/conduitData/message";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture"
 import { ArticleDetailPage } from "../../../src/pages/conduit/ArticleDetailPage.page";
-import { ArticleDataRes, UserResponse } from "../../../src/types/conduiType/responseApi";
+import { HomePage } from "../../../src/pages/conduit/HmePage.page";
+import { ArticleDataRes, ArticlesListRes, UserResponse } from "../../../src/types/conduiType/responseApi";
 import { getToken } from "../../helpers/getToken.helper";
 
 test.describe("Verify UI", () => {
@@ -94,7 +96,7 @@ test.describe("Verify UI", () => {
         const artileDetailPage = new ArticleDetailPage(ortherPage);
         await artileDetailPage.goto(article.slug);
         await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
-        const favRes=await artileDetailPage.clickLikeAndWait();
+        const favRes = await artileDetailPage.clickLikeAndWait();
         expect(favRes.status()).toBe(200);
         const res = await otherApi.getArticle(article.slug);
         expect(res.status()).toBe(200);
@@ -112,5 +114,43 @@ test.describe("Verify UI", () => {
         await artileDetailPage.reloadPage();
         await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
         await expect(artileDetailPage.likedBtn).toBeVisible();
+    })
+
+    test("AE07-UI-03: Global Feed API 500", { tag: ["@ui"] }, async ({ page }) => {
+        await page.route(/\api\/articles\?/, (route) =>
+            route.fulfill({
+                status: 500,
+                json: {
+                    errors: {
+                        body: ["Server error"]
+                    }
+                }
+            }));
+        const fesRes = page.waitForResponse(/\/api\/articles\?/);
+        const homePage = new HomePage(page);
+        await homePage.goto();
+        expect((await fesRes).status()).toBe(500);
+        await expect(homePage.loadingPage).toHaveText(UIErrorMess.apiResponse500);
+    })
+
+    test("AR07-UI-04: Patch first article title", { tag: "@ui" }, async ({ page }) => {
+        const fakeTitle = `Mocked title ${Date.now()}`;
+        let realTitles: string[] = [];
+        await page.route(/\/api\/articles\?/, async (route) => {
+            const response = await route.fetch();
+            const json: ArticlesListRes = await response.json();
+            realTitles = json.articles.map((a) => a.title);
+            if (json.articles.length > 0) {
+                json.articles[0].title = fakeTitle;
+                await route.fulfill({
+                    response, json
+                })
+            }
+        });
+        const feedRes = page.waitForResponse(/\/api\/articles\?/);
+        const homePage = new HomePage(page);
+        await homePage.goto();
+        await feedRes;
+        expect(realTitles.length,"Feed must have at least 1 real article").toBeGreaterThan(0);
     })
 })

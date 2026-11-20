@@ -13,6 +13,7 @@ import { LoginPage } from "../../pages/conduit/LoginPage.page";
 import { SettingPage } from "../../pages/conduit/SettingPage.page";
 import { NavBar } from "../../pages/conduit/NavBar.page";
 import { ArticleDetailPage } from "../../pages/conduit/ArticleDetailPage.page";
+import { HomePage } from "../../pages/conduit/HmePage.page";
 
 type WorkerFixtures = {
     workerUser: ConduitUser;
@@ -41,6 +42,7 @@ type TestFixture = {
     apiWithToken: (token: string) => Promise<ConduitApi>;
     ortherPage: Page;
     articleDetailPage: ArticleDetailPage;
+    homePage: HomePage;
 }
 
 async function ensureUser(request: APIRequest, user: ConduitUser) {
@@ -218,6 +220,11 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
     articleDetailPage: async({page},use)=>{
         const articleDetailPage=new ArticleDetailPage(page);
         await use(articleDetailPage);
+    },
+
+    homePage: async({page},use)=>{
+        const homePage=new HomePage(page);
+        await use(homePage);
     },
 });
 

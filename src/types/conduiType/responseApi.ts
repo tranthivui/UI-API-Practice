@@ -31,8 +31,27 @@ export type ConduitUserData = {
 }
 
 export type ArticleDataRes = {
-    article: {
-        slug: string,
+    article: Artice
+}
+
+export type ArticlesListRes={
+    articles: Artice[];
+}
+
+export type getCommentRestData = {
+    comments: Comment[];
+}
+
+export type writeCommentRestData = {
+    comment: Comment;
+}
+
+export type ErrorRegisterResponse = {
+    errors: Record<string, string[]>;
+};
+
+export type Artice={
+    slug: string,
         title: string,
         description: string,
         body: string,
@@ -47,17 +66,4 @@ export type ArticleDataRes = {
             image: string,
             following: boolean
         }
-    }
 }
-
-export type getCommentRestData = {
-    comments: Comment[];
-}
-
-export type writeCommentRestData = {
-    comment: Comment;
-}
-
-export type ErrorRegisterResponse = {
-    errors: Record<string, string[]>;
-};
