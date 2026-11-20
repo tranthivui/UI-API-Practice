@@ -13,7 +13,7 @@ import { LoginPage } from "../../pages/conduit/LoginPage.page";
 import { SettingPage } from "../../pages/conduit/SettingPage.page";
 import { NavBar } from "../../pages/conduit/NavBar.page";
 import { ArticleDetailPage } from "../../pages/conduit/ArticleDetailPage.page";
-import { HomePage } from "../../pages/conduit/HmePage.page";
+import { HomePage } from "../../pages/conduit/HomePage.page";
 
 type WorkerFixtures = {
     workerUser: ConduitUser;
@@ -74,8 +74,8 @@ async function loginToken(request: APIRequest, user: ConduitUser): Promise<strin
     if (!token) {
         throw new Error(`Login success but response not have token`)
     }
-    return token;
     await ctx.dispose();
+    return token;
 }
 
 export const test = base.extend<TestFixture, WorkerFixtures>({
@@ -141,8 +141,7 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         const deleteArtilceRes = await authApi.deleteArticle(created.slug);
         expect(deleteArtilceRes.status()).toBe(204);
         const getArticleRes = await authApi.getArticle(created.slug);
-        if (getArticleRes.status() === 404)
-            expect(getArticleRes.status()).toBe(404);
+        expect(getArticleRes.status()).toBe(404)
     },
 
     loggedInPage: async ({ page, workerToken }, use) => {
@@ -217,13 +216,13 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         await context.close();
     },
 
-    articleDetailPage: async({page},use)=>{
-        const articleDetailPage=new ArticleDetailPage(page);
+    articleDetailPage: async ({ page }, use) => {
+        const articleDetailPage = new ArticleDetailPage(page);
         await use(articleDetailPage);
     },
 
-    homePage: async({page},use)=>{
-        const homePage=new HomePage(page);
+    homePage: async ({ page }, use) => {
+        const homePage = new HomePage(page);
         await use(homePage);
     },
 });

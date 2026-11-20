@@ -5,7 +5,7 @@ import { TOKEN_KEY } from "../../../src/data/conduitData/data";
 import { UIErrorMess } from "../../../src/data/conduitData/message";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture"
 import { ArticleDetailPage } from "../../../src/pages/conduit/ArticleDetailPage.page";
-import { HomePage } from "../../../src/pages/conduit/HmePage.page";
+import { HomePage } from "../../../src/pages/conduit/HomePage.page";
 import { ArticleDataRes, ArticlesListRes, UserResponse } from "../../../src/types/conduiType/responseApi";
 import { getToken } from "../../helpers/getToken.helper";
 
@@ -114,6 +114,8 @@ test.describe("Verify UI", () => {
         await artileDetailPage.reloadPage();
         await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
         await expect(artileDetailPage.likedBtn).toBeVisible();
+        const unFollowRes = await otherApi.followAuthor(workerUser.username);
+        expect(unFollowRes.status()).toBe(200);
     })
 
     test("AE07-UI-03: Global Feed API 500", { tag: ["@ui"] }, async ({ page }) => {
@@ -133,24 +135,25 @@ test.describe("Verify UI", () => {
         await expect(homePage.loadingPage).toHaveText(UIErrorMess.apiResponse500);
     })
 
-    test("AR07-UI-04: Patch first article title", { tag: "@ui" }, async ({ page }) => {
+    test("AR07-UI-04: Patch first article title", { tag: "@ui" }, async ({ article, loggedInPage }) => {
         const fakeTitle = `Mocked title ${Date.now()}`;
         let realTitles: string[] = [];
-        await page.route(/\/api\/articles\?/, async (route) => {
+        await loggedInPage.route(/\/api\/articles\?/, async (route) => {
             const response = await route.fetch();
             const json: ArticlesListRes = await response.json();
             realTitles = json.articles.map((a) => a.title);
             if (json.articles.length > 0) {
                 json.articles[0].title = fakeTitle;
-                await route.fulfill({
-                    response, json
-                })
             }
+            await route.fulfill({
+                response, json
+            })
         });
-        const feedRes = page.waitForResponse(/\/api\/articles\?/);
-        const homePage = new HomePage(page);
+        const feedRes = loggedInPage.waitForResponse(/\/api\/articles\?/);
+        const homePage = new HomePage(loggedInPage);
         await homePage.goto();
         await feedRes;
-        expect(realTitles.length,"Feed must have at least 1 real article").toBeGreaterThan(0);
+        expect(realTitles, "Feed must contain the article created by fixture").toContain(article.data.title);
+        await expect(homePage.articleTitles).toHaveText([fakeTitle, ...realTitles.slice(1)]);
     })
 })

@@ -36,10 +36,10 @@ test.describe("Verify Article API", () => {
 
      test("AE07-API-03: User B edit article of user A", { tag: "@api"}, async ({ article, authApi,otherApi }) => {
         const newArticle={
-            ...article,
+            ...article.data,
             title: `${article.data.title} update new by B`
         };
-        const editArtRes=await otherApi.editArticle(newArticle.data,article.slug);
+        const editArtRes=await otherApi.editArticle(newArticle,article.slug);
         expect(editArtRes.status()).toBe(403);
         const getArtRes=await authApi.getArticle(article.slug);
         expect(getArtRes.status()).toBe(200);
