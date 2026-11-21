@@ -1481,3 +1481,37 @@ https://conduit-api.bondaracademy.com/api/articles/test-three-edit-92187/comment
     }
 }
 ```
+
+## Câu hỏi phóng vấn
+### 1. Test phân quyền (authorization) thế nào? Vì sao test 403 phải kiểm thêm "dữ liệu không đổi" sau khi nhận 403?
+- Authorization là kiểm tra người dùng có quyền thực hiện một hành động trên tài nguyên hay không. Ví dụ dùng tài khoản B để edit bài viết của A -> B không thể edit bài viết của A
+- Cần kiểm tra thêm dữ liệu không đổi vì có thể API trả về 403 nhưng dữ liệu đã đổi không chứng minh được là ko có quyền -> Nên ngoài status cần kiểm tra thêm cả dữ liệu không đổi
+
+### 2. Khi nào cần nhiều BrowserContext trong 1 test? Context khác page và browser thế nào?
+- Khi nào cần nhiều BrowserContext trong 1 test?: Khi cần test nhiều user có trạng thái đăng nhập hoặc session độc lập trong cùng một test. Ví dụ một trang user B viết comment vào bài viết của A, trang A reload lại sẽ thấy comment của B. Tránh trường hợp dùng một context sau khi B viết comment xong phải logout rồi login lại A
+- Browser là một trình duyệt được khơi chạy
+- Context là một phiên trình duyệt độc lập
+- Page là một tab trong context
+
+### 3. route.fulfill thuần, route.fetch + sửa response, route.abort: mỗi cách dùng khi nào? Rủi ro chung của mock là gì?
+- route.fulfill thuần,: Dùng khi muốn tự tạo response giả lập, không cần gọi server thật -> Ví dụ giả lập server trả về 500 xem trang xử lý như nào
+- oute.fetch + sửa response: Dùng khi muốn gọi API thật, sau đó chỉnh sửa một phần response trước khi trả về browser. -> Ví dụ ae07 gọi API lên server thật nhưng sửa title của bài viết đầu tiên -> UI hiển thị đúng title mới sửa
+- route.abort: Dùng khi muốn giả lập request bị lỗi mạng, không nhận được HTTP response bình thường.
+
+- Rủi ro
+  - Mock không phản ánh chính xác hành vi backend thực tế
+  - Test pass nhưng API thật vẫn có thể lỗi.
+  - Mock sai response schema khiến test không có giá trị.
+  - Mock quá nhiều có thể khiến test không còn kiểm tra được integration thực tế.
+
+### 4. expect.poll, toPass, waitForTimeout khác nhau thế nào? Vì sao waitForTimeout là xấu?
+- expect.poll: Dùng khi muốn kiểm tra một giá trị thay đổi theo thời gian và retry assertion cho đến khi đạt điều kiện hoặc hết timeout. -> Ví dụ trong bài ae07 sau khi like thì cần kiểm tra API trả về số lượt lai tăng lên 1 cần auto retry để kiểm tra
+- toPass: Dùng khi muốn retry cả một nhóm thao tác/assertion cho đến khi tất cả đều pass.
+- waitForTimeout: Dùng để dừng test trong một khoảng thời gian cố định.
+
+- waitForTimeout là xấu vì phải chờ hết thời gian timeout có thể gây chậm hệ thống
+
+### 5. Data-driven cho test âm: tổ chức dữ liệu ra sao để thêm case mới không phải sửa code test? Khi nào không nên gộp các case vào một vòng lặp?
+- Tổ chức dữ liệu thành một mảng, ví dụ ae07 tổ thức thành mảng các case lỗi có cấu trúc giống nhau -> Code chỉ cần viết 1 lần cho bộ dữ liệu này không cần mỗi case lỗi phải viết 1 lần code
+- Không nên gộp khi các case có worfow khác nhau, assertion khác nhau quá nhiều…
+

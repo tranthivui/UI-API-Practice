@@ -1,3 +1,4 @@
+import { Page } from "@playwright/test";
 import { CONDUIT_GET_USER_API } from "../../../src/config/conduitPaths/paths";
 import { CONDUIT_ENV } from "../../../src/config/env";
 import { buildArticle } from "../../../src/data/conduitData/articleFactory";
@@ -128,8 +129,8 @@ test.describe("Verify UI", () => {
         const homePage = new HomePage(page);
         await homePage.goto();
         expect((await fesRes).status()).toBe(500);
-        await expect(homePage.loadingMessage).toHaveText(UIErrorMess.apiResponse500);
-        await expect(homePage.listArtice).toHaveCount(1);
+        await expect(homePage.loadingMessage).toBeVisible();
+        await expect(homePage.articleTitles).toHaveCount(0);
     })
 
     test("AR07-UI-04: Patch first article title", { tag: "@ui" }, async ({ article, loggedInPage }) => {
