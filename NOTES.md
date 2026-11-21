@@ -1484,34 +1484,63 @@ https://conduit-api.bondaracademy.com/api/articles/test-three-edit-92187/comment
 
 ## Câu hỏi phóng vấn
 ### 1. Test phân quyền (authorization) thế nào? Vì sao test 403 phải kiểm thêm "dữ liệu không đổi" sau khi nhận 403?
-- Authorization là kiểm tra người dùng có quyền thực hiện một hành động trên tài nguyên hay không. Ví dụ dùng tài khoản B để edit bài viết của A -> B không thể edit bài viết của A
-- Cần kiểm tra thêm dữ liệu không đổi vì có thể API trả về 403 nhưng dữ liệu đã đổi không chứng minh được là ko có quyền -> Nên ngoài status cần kiểm tra thêm cả dữ liệu không đổi
+- Test phân quyền thế nào
+
+Authorization là kiểm tra một người đã đăng nhập có được làm hành động đó trên tài nguyên đó không. Khác authentication: 401 = chưa xác thực (không có token, token sai), 403 = xác thực rồi nhưng không có quyền.
+Cần 2 user thật: user A sở hữu dữ liệu, user B là người khác. Dùng token của B gọi API sửa/xoá dữ liệu của A, rồi kiểm status chính xác (toBe(403), không dùng not.toBe(200)).
+Luôn có test dương đi kèm: chính A sửa/xoá được (API-01 A sửa bài → 200). Nếu không, test 403 có thể pass vì API hỏng với mọi người.
+Ví dụ AE07: fixture otherUser/otherApi (user B, cùng logic ensureUser với A). API-02: B DELETE bài của A → 403. API-03: B PUT bài của A → 403.
+
+- Vì sao kiểm thêm dữ liệu không đổi
+
+Status chỉ là thứ server nói; dữ liệu mới là thứ server làm. Có thể có bug: server vẫn xoá/sửa rồi mới trả 403, hoặc sửa một phần. Chỉ kiểm status thì test vẫn pass.
+Ví dụ AE07: sau 403, A GET lại bài → vẫn 200 và title vẫn là title cũ. Bài học thêm: dữ liệu B gửi phải thật sự khác ({ ...article.data, title: mới }); lần đầu tôi viết { ...article, title } nên B gửi lại dữ liệu y hệt → test pass giả kể cả khi server cho B sửa.
+Tự kiểm: tạm cho API-02 dùng authApi (chính A) → test fail vì nhận 204, chứng minh test phân biệt được.
 
 ### 2. Khi nào cần nhiều BrowserContext trong 1 test? Context khác page và browser thế nào?
-- Khi nào cần nhiều BrowserContext trong 1 test?: Khi cần test nhiều user có trạng thái đăng nhập hoặc session độc lập trong cùng một test. Ví dụ một trang user B viết comment vào bài viết của A, trang A reload lại sẽ thấy comment của B. Tránh trường hợp dùng một context sau khi B viết comment xong phải logout rồi login lại A
-- Browser là một trình duyệt được khơi chạy
-- Context là một phiên trình duyệt độc lập
-- Page là một tab trong context
+- Khi nào cần nhiều context
 
-### 3. route.fulfill thuần, route.fetch + sửa response, route.abort: mỗi cách dùng khi nào? Rủi ro chung của mock là gì?
-- route.fulfill thuần,: Dùng khi muốn tự tạo response giả lập, không cần gọi server thật -> Ví dụ giả lập server trả về 500 xem trang xử lý như nào
-- oute.fetch + sửa response: Dùng khi muốn gọi API thật, sau đó chỉnh sửa một phần response trước khi trả về browser. -> Ví dụ ae07 gọi API lên server thật nhưng sửa title của bài viết đầu tiên -> UI hiển thị đúng title mới sửa
-- route.abort: Dùng khi muốn giả lập request bị lỗi mạng, không nhận được HTTP response bình thường.
+Khi một test cần nhiều người dùng cùng lúc, mỗi người có phiên đăng nhập riêng: chat, comment, phân quyền trên UI, một người sửa người kia thấy thay đổi.
+Ví dụ AE07-UI-01: B (ortherPage, context mới với token B) viết comment vào bài của A; A (loggedInPage) reload và không thấy comment của B, vì server bondaracademy lọc comment theo người gọi. Không cần logout/login lại giữa 2 user.
+Browser – context – page
 
-- Rủi ro
-  - Mock không phản ánh chính xác hành vi backend thực tế
-  - Test pass nhưng API thật vẫn có thể lỗi.
-  - Mock sai response schema khiến test không có giá trị.
-  - Mock quá nhiều có thể khiến test không còn kiểm tra được integration thực tế.
+- Browser: một tiến trình trình duyệt (chromium) đã khởi chạy. Tốn tài nguyên, thường 1 cái cho cả worker.
+- Context: một phiên độc lập trong browser, giống cửa sổ ẩn danh: cookie, localStorage, cache riêng. Tạo rẻ và nhanh hơn mở browser mới. Tự tạo bằng browser.newContext() thì phải tự close().
+- Page: một tab trong context. Các tab cùng context dùng chung cookie/localStorage.
+Ví dụ tự kiểm 3: nếu ortherPage là tab mới trong context của A (page.context().newPage()), hai tab dùng chung một jwtToken (so token 2 tab → true). Test vẫn pass vì init script ghi lại token mỗi lần tải trang, nhưng thật ra hai user không tách biệt: request tiếp theo của tab B có thể chạy bằng token của A. Vì vậy 2 user phải là 2 context.
+
+### 3. route.fulfill thuần, route.fetch + sửa response, route.abort: mỗi cách dùng khi nào? Rủi ro chung của mock?
+- route.fulfill thuần: tự dựng toàn bộ response, không gọi server. Dùng để giả trạng thái khó tạo thật: lỗi 500, danh sách rỗng, dữ liệu biên. Ví dụ UI-03: Global Feed → fulfill({ status: 500 }), UI kẹt ở "Loading articles..." và không hiện bài nào (bug UX: không có thông báo lỗi).
+- route.fetch + sửa response: gọi server thật, lấy response, sửa một phần rồi fulfill({ response, json }). Giữ nguyên status/headers thật, không phải tự dựng cả JSON. Dùng khi chỉ cần đổi một trường. Ví dụ UI-04: đổi title bài đầu tiên thành Mocked title ..., các bài còn lại vẫn là dữ liệu thật, so với response gốc (không gõ cứng). Lưu ý: luôn gọi fulfill, kể cả khi danh sách rỗng, nếu không request treo tới timeout.
+- route.abort: huỷ request, browser không nhận response. Dùng để chặn tài nguyên không cần (quảng cáo ở AE01: googlesyndication, doubleclick) hoặc giả lỗi mạng (mất kết nối, timeout) để xem UI xử lý.
+- Rủi ro chung:
+  - Mock lệch hợp đồng API thật (schema đổi mà mock không đổi) → test pass nhưng app thật lỗi. Giảm rủi ro: mock có type/satisfies, ưu tiên route.fetch.
+  - Mock không chạy (sai pattern URL) mà test vẫn pass → phải tự kiểm: bỏ page.route thì test phải fail (UI-03 nhận 200 thay vì 500, UI-04 realTitles rỗng).
+  - Mock quá nhiều → không còn test tích hợp thật; vẫn cần test chạy với backend thật.
 
 ### 4. expect.poll, toPass, waitForTimeout khác nhau thế nào? Vì sao waitForTimeout là xấu?
-- expect.poll: Dùng khi muốn kiểm tra một giá trị thay đổi theo thời gian và retry assertion cho đến khi đạt điều kiện hoặc hết timeout. -> Ví dụ trong bài ae07 sau khi like thì cần kiểm tra API trả về số lượt lai tăng lên 1 cần auto retry để kiểm tra
-- toPass: Dùng khi muốn retry cả một nhóm thao tác/assertion cho đến khi tất cả đều pass.
-- waitForTimeout: Dùng để dừng test trong một khoảng thời gian cố định.
+- expect.poll(fn): lặp lại một hàm trả về giá trị rồi áp matcher lên giá trị đó tới khi đúng hoặc hết timeout. Dùng khi dữ liệu thay đổi không đồng bộ, thường là gọi API. Ví dụ UI-02: B bấm ♥ trên UI, poll GET article bằng authApi tới khi favoritesCount === before + 1. Tự kiểm 4: bỏ bấm ♥ → fail sau 10s với "Expected: 1, Received: 0".
+- expect(async () => {...}).toPass(): lặp lại cả một khối code có nhiều expect tới khi tất cả pass. Dùng khi cần kiểm nhiều thứ cùng lúc. Ví dụ có thể viết lại UI-02: trong khối, GET bài rồi kiểm cả favoritesCount và favorited.
+Khác biệt: poll kiểm 1 giá trị, message rõ giá trị nhận được; toPass bọc nhiều assertion/hành động.
+- waitForTimeout(ms): dừng cứng một khoảng cố định, không gắn với điều kiện nào.
 
-- waitForTimeout là xấu vì phải chờ hết thời gian timeout có thể gây chậm hệ thống
+- Vì sao xấu:
+  - Ngắn quá → flaky: máy CI chậm hơn máy local, dữ liệu chưa kịp đổi thì test fail ngẫu nhiên.
+  - Dài quá → luôn chờ hết thời gian dù dữ liệu đã sẵn sàng, cả bộ test chậm.
+  - Che nguyên nhân: không biết đang chờ cái gì. poll/toPass/web-first assertion dừng ngay khi điều kiện đúng và báo rõ khi fail.
 
 ### 5. Data-driven cho test âm: tổ chức dữ liệu ra sao để thêm case mới không phải sửa code test? Khi nào không nên gộp các case vào một vòng lặp?
-- Tổ chức dữ liệu thành một mảng, ví dụ ae07 tổ thức thành mảng các case lỗi có cấu trúc giống nhau -> Code chỉ cần viết 1 lần cho bộ dữ liệu này không cần mỗi case lỗi phải viết 1 lần code
-- Không nên gộp khi các case có worfow khác nhau, assertion khác nhau quá nhiều…
+- Tổ chức dữ liệu
 
+Mỗi case là một object chứa cả input và expected: tên case, dữ liệu gửi, status, trường lỗi, message. Đặt trong mảng có type + satisfies để TS bắt lỗi thiếu trường.
+Test viết một lần: for...of ngoài test(), tên test lấy từ data nên mỗi test có tên khác nhau. Thêm case mới chỉ cần thêm 1 object vào mảng.
+Ví dụ AE07-API-05 (registerErrorCases): username rỗng / email sai định dạng / password rỗng → mỗi case kiểm 422 + errors[field] chứa message riêng ("can't be blank", "is invalid"). Dữ liệu duy nhất dùng Date.now() để không trùng.
+Khi nào không gộp
+
+Khi case cần setup khác (fixture, dữ liệu có sẵn) hoặc luồng/assertion khác, phải viết if theo loại case trong test → tách test riêng.
+Ví dụ AE07: case "email đã tồn tại" cần email thật của workerUser (không gõ cứng) nên tách thành test riêng thay vì nhét vào mảng.
+Ví dụ khác: test dương (đăng ký thành công) có assertion khác hoàn toàn, không gộp với test âm.
+
+## NOTE storage
+- newContext → false: mỗi user có localStorage riêng.
+- Dùng chung context → true: 2 tab chung token, navbar B vẫn hiện tên B nhưng request tiếp theo sẽ chạy bằng token A, test vẫn pass nên lỗi bị che.

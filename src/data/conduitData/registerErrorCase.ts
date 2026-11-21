@@ -1,4 +1,4 @@
-import { ConduitUser } from "../../types/conduiType/NewUser";
+import { ConduitUser } from "../../types/conduiTypes/NewUser";
 
 type RegisterErrorCase = {
     name: string;

@@ -1,5 +1,5 @@
 import { Locator, Page } from "@playwright/test";
-import { Article } from "../../types/conduiType/Article";
+import { Article } from "../../types/conduiTypes/Article";
 
 export class EditorPage{
     private readonly url="/editor";

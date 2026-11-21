@@ -1,11 +1,11 @@
 import { responseMess } from "../../../src/data/conduitData/message";
 import { registerErrorCases } from "../../../src/data/conduitData/registerErrorCase";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture";
-import { ArticleDataRes, ErrorRegisterResponse, writeCommentRestData } from "../../../src/types/conduiType/responseApi";
+import { ArticleDataRes, ErrorRegisterResponse, writeCommentRestData } from "../../../src/types/conduiTypes/responseApi";
 import { findComment } from "../../helpers/findComment.helper";
 
 test.describe("Verify Article API", () => {
-    test("AE07-API-01: Edit articke", { tag: ["@api", "@smoke"] }, async ({ article, authApi }) => {
+    test("AE07-API-01: Edit article", { tag: ["@api", "@smoke"] }, async ({ article, authApi }) => {
         const newData={
             ...article.data,
             title: `${article.data.title} Update ${Date.now()}`,
@@ -15,7 +15,7 @@ test.describe("Verify Article API", () => {
         expect(articleUpdateRes.status()).toBe(200);
         const articleUpdateResData: ArticleDataRes = await articleUpdateRes.json();
         const oldslug=article.slug;
-        article.slug=articleUpdateResData.article.slug;
+       article.slug=articleUpdateResData.article.slug;
         const getByOldSlugRes = await authApi.getArticle(oldslug);
         expect(getByOldSlugRes.status()).toBe(404);
         const getByNewSlugRes = await authApi.getArticle(articleUpdateResData.article.slug);
@@ -53,10 +53,10 @@ test.describe("Verify Article API", () => {
         expect(writeCommentRes.status()).toBe(200);
         const writeCommentDataRes:writeCommentRestData=await writeCommentRes.json();
         const commentId=writeCommentDataRes.comment.id;
-        const exsitsComment=await findComment(article.slug,authApi,commentId);
-        expect(exsitsComment).toBeDefined();
-        expect(exsitsComment?.body).toBe(comment);
-        expect(exsitsComment?.author.username).toBe(workerUser.username);
+        const existingComment=await findComment(article.slug,authApi,commentId);
+        expect(existingComment).toBeDefined();
+        expect(existingComment?.body).toBe(comment);
+        expect(existingComment?.author.username).toBe(workerUser.username);
         const deleteCommentRes=await authApi.deleteComment(article.slug,commentId);
         expect(deleteCommentRes.status()).toBe(200);
         const commentAfterDelete=await findComment(article.slug,authApi,commentId);
@@ -64,7 +64,7 @@ test.describe("Verify Article API", () => {
     })
 
     for(const userData of registerErrorCases){
-        test(`Verify ${userData.name}`,{tag:"@api"}, async({authApi})=>{
+        test(`AE07-API-05: Verify ${userData.name}`,{tag:"@api"}, async({authApi})=>{
             const registerRespone=await authApi.registerUser(userData.user);
             expect(registerRespone.status()).toBe(userData.status);
             const registerResData:ErrorRegisterResponse=await registerRespone.json();
@@ -72,7 +72,7 @@ test.describe("Verify Article API", () => {
         })
     }
 
-    test("Verify case register with exsits email",{tag:"@api"},async({workerUser,authApi})=>{
+    test("Verify case register with existing email",{tag:"@api"},async({workerUser,authApi})=>{
         const registerRes=await authApi.registerUser(workerUser);
         expect(registerRes.status()).toBe(422);
         const registerResData:ErrorRegisterResponse=await registerRes.json();

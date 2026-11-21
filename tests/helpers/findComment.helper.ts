@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { ConduitApi } from "../../src/api/conduitApi/ConduitApi";
-import { getCommentRestData } from "../../src/types/conduiType/responseApi";
-import { Comment } from "../../src/types/conduiType/Comment";
+import { getCommentRestData } from "../../src/types/conduiTypes/responseApi";
+import { Comment } from "../../src/types/conduiTypes/Comment";
 
 export async function findComment(slug:string, requestApi:ConduitApi, commentId:number):Promise<Comment|undefined> {
     const getCommentRes=await requestApi.getComments(slug);

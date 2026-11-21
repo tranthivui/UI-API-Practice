@@ -1,6 +1,6 @@
 import { responseMess } from "../../../src/data/conduitData/message";
 import {test,expect} from "../../../src/fixtures/conduitFixture/conduit.fixture"
-import { ArticleDataRes, GetUserFail, UserResponse } from "../../../src/types/conduiType/responseApi";
+import { ArticleDataRes, GetUserFail, UserResponse } from "../../../src/types/conduiTypes/responseApi";
 
 test.describe("Verify user API",()=>{
     test("AE06-API-01: Check getUser and workeruser return same user",{tag: ["@smoke","@api"] },async({authApi,workerUser})=>{

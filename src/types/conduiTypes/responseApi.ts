@@ -1,4 +1,3 @@
-import { Article } from "./Article";
 import { Comment } from "./Comment"
 
 export type UserResponse = {
@@ -31,11 +30,11 @@ export type ConduitUserData = {
 }
 
 export type ArticleDataRes = {
-    article: Artice
+    article: ArticleRes
 }
 
 export type ArticlesListRes = {
-    articles: Artice[];
+    articles: ArticleRes[];
 }
 
 export type getCommentRestData = {
@@ -50,7 +49,7 @@ export type ErrorRegisterResponse = {
     errors: Record<string, string[]>;
 };
 
-export type Artice = {
+export type ArticleRes = {
     slug: string,
     title: string,
     description: string,

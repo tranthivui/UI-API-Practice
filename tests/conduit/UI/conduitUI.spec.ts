@@ -3,11 +3,10 @@ import { CONDUIT_GET_USER_API } from "../../../src/config/conduitPaths/paths";
 import { CONDUIT_ENV } from "../../../src/config/env";
 import { buildArticle } from "../../../src/data/conduitData/articleFactory";
 import { TOKEN_KEY } from "../../../src/data/conduitData/data";
-import { UIErrorMess } from "../../../src/data/conduitData/message";
 import { test, expect } from "../../../src/fixtures/conduitFixture/conduit.fixture"
 import { ArticleDetailPage } from "../../../src/pages/conduit/ArticleDetailPage.page";
 import { HomePage } from "../../../src/pages/conduit/HomePage.page";
-import { ArticleDataRes, ArticlesListRes, UserResponse } from "../../../src/types/conduiType/responseApi";
+import { ArticleDataRes, ArticlesListRes, UserResponse } from "../../../src/types/conduiTypes/responseApi";
 import { getToken } from "../../helpers/getToken.helper";
 
 test.describe("Verify UI", () => {
@@ -65,12 +64,12 @@ test.describe("Verify UI", () => {
         expect(token).toBeNull();
         await editorPage.goto();
         await expect(page).not.toHaveURL(/\/editor/);
-        await expect(navBar.singInLink).toBeVisible();
+        await expect(navBar.signInLink).toBeVisible();
         await expect(navBar.newArticleLink).toBeHidden();
     })
 
-    test("AE07-UI-01: B write comment for article of A", { tag: "@ui" }, async ({ article, ortherPage, otherUser, loggedInPage }) => {
-        const articlePageB = new ArticleDetailPage(ortherPage);
+    test("AE07-UI-01: B write comment for article of A", { tag: "@ui" }, async ({ article, otherPage, otherUser, loggedInPage }) => {
+        const articlePageB = new ArticleDetailPage(otherPage);
         await articlePageB.goto(article.slug);
         await expect(articlePageB.getHeaderTitle(article.data.title)).toBeVisible();
         const commentDetail = `Comment by ${otherUser.username} at ${Date.now()}`;
@@ -87,15 +86,15 @@ test.describe("Verify UI", () => {
         await expect(commentLocator).not.toBeVisible();
     })
 
-    test("AE07-UI-02: B like for article of A", { tag: ["@ui", "@api"] }, async ({ article, otherApi, ortherPage, authApi, followedAuthor }) => {
+    test("AE07-UI-02: B like for article of A", { tag: ["@ui", "@api"] }, async ({ article, otherApi, otherPage, authApi, followedAuthor }) => {
         const getArticleRes = await authApi.getArticle(article.slug);
         expect(getArticleRes.status()).toBe(200);
         const getArticleResData: ArticleDataRes = await getArticleRes.json();
         const before = getArticleResData.article.favoritesCount;
-        const artileDetailPage = new ArticleDetailPage(ortherPage);
-        await artileDetailPage.goto(article.slug);
-        await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
-        const favRes = await artileDetailPage.clickLikeAndWait();
+        const articleDetailPage = new ArticleDetailPage(otherPage);
+        await articleDetailPage.goto(article.slug);
+        await expect(articleDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
+        const favRes = await articleDetailPage.clickLikeAndWait();
         expect(favRes.status()).toBe(200);
         const res = await otherApi.getArticle(article.slug);
         expect(res.status()).toBe(200);
@@ -110,9 +109,9 @@ test.describe("Verify UI", () => {
             message: "favoritesCount should increase after B clicks favorite",
             timeout: 10_000,
         }).toBe(before + 1);
-        await artileDetailPage.reloadPage();
-        await expect(artileDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
-        await expect(artileDetailPage.likedBtn).toBeVisible();
+        await articleDetailPage.reloadPage();
+        await expect(articleDetailPage.getHeaderTitle(article.data.title)).toBeVisible();
+        await expect(articleDetailPage.likedBtn).toBeVisible();
     })
 
     test("AE07-UI-03: Global Feed API 500", { tag: ["@ui"] }, async ({ page }) => {
@@ -125,15 +124,15 @@ test.describe("Verify UI", () => {
                     }
                 }
             }));
-        const fesRes = page.waitForResponse(/\/api\/articles\?/);
+        const feedRes = page.waitForResponse(/\/api\/articles\?/);
         const homePage = new HomePage(page);
         await homePage.goto();
-        expect((await fesRes).status()).toBe(500);
+        expect((await feedRes).status()).toBe(500);
         await expect(homePage.loadingMessage).toBeVisible();
         await expect(homePage.articleTitles).toHaveCount(0);
     })
 
-    test("AR07-UI-04: Patch first article title", { tag: "@ui" }, async ({ article, loggedInPage }) => {
+    test("AE07-UI-04: Patch first article title", { tag: "@ui" }, async ({ article, loggedInPage }) => {
         const fakeTitle = `Mocked title ${Date.now()}`;
         let realTitles: string[] = [];
         await loggedInPage.route(/\/api\/articles\?/, async (route) => {

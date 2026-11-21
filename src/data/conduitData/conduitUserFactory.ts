@@ -1,5 +1,5 @@
 import { CONDUIT_ENV } from "../../config/env";
-import { ConduitUser } from "../../types/conduiType/NewUser";
+import { ConduitUser } from "../../types/conduiTypes/NewUser";
 
 export function buildWorkerUser(workerIndex:number,suffix = ""): ConduitUser {
     const name=`${CONDUIT_ENV.emailPrefix}_w${workerIndex}${suffix}`;

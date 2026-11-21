@@ -1,6 +1,4 @@
-import { CONDUIT_ENV } from "../../config/env";
-import { Article } from "../../types/conduiType/Article";
-import { ConduitUser } from "../../types/conduiType/NewUser";
+import { Article } from "../../types/conduiTypes/Article";
 
 export function buildArticle():Article {
     return {

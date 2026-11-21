@@ -1,10 +1,10 @@
 import { APIRequest, APIRequestContext, test as base, expect, Page } from "@playwright/test";
 import { CONDUIT_ENV } from "../../config/env";
-import { ConduitUser } from "../../types/conduiType/NewUser";
+import { ConduitUser } from "../../types/conduiTypes/NewUser";
 import { ConduitApi } from "../../api/conduitApi/ConduitApi";
 import { buildWorkerUser } from "../../data/conduitData/conduitUserFactory";
-import { ArticleDataRes, FollowResData, UserResponse } from "../../types/conduiType/responseApi";
-import { Article } from "../../types/conduiType/Article";
+import { ArticleDataRes, FollowResData, UserResponse } from "../../types/conduiTypes/responseApi";
+import { Article } from "../../types/conduiTypes/Article";
 import { buildArticle } from "../../data/conduitData/articleFactory";
 import { TOKEN_KEY } from "../../data/conduitData/data";
 import { ProfilePage } from "../../pages/conduit/ProfilePage.page";
@@ -40,7 +40,7 @@ type TestFixture = {
     createdSlugs: string[];
     guestApi: ConduitApi;
     apiWithToken: (token: string) => Promise<ConduitApi>;
-    ortherPage: Page;
+    otherPage: Page;
     articleDetailPage: ArticleDetailPage;
     homePage: HomePage;
     followedAuthor: string;
@@ -139,8 +139,8 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
             slug: createArticleResData.article.slug
         };
         await use(created);
-        const deleteArtilceRes = await authApi.deleteArticle(created.slug);
-        expect(deleteArtilceRes.status()).toBe(204);
+        const deleteArticleRes = await authApi.deleteArticle(created.slug);
+        expect(deleteArticleRes.status()).toBe(204);
         const getArticleRes = await authApi.getArticle(created.slug);
         expect(getArticleRes.status()).toBe(404)
     },
@@ -206,7 +206,7 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
         for (const ctx of contexts) await ctx.dispose();
     },
 
-    ortherPage: async ({ browser, otherToken }, use) => {
+    otherPage: async ({ browser, otherToken }, use) => {
         const context = await browser.newContext({ baseURL: CONDUIT_ENV.url });
         await context.addInitScript(
             ({ key, token }) => localStorage.setItem(key, token),

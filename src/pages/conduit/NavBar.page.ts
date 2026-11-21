@@ -4,13 +4,13 @@ export class NavBar{
     readonly page:Page;
     readonly settingLink:Locator;
     readonly newArticleLink: Locator;
-    readonly singInLink: Locator;
+    readonly signInLink: Locator;
 
     constructor(page:Page){
         this.page=page;
         this.settingLink=this.page.getByRole("link",{name:"Settings"});
         this.newArticleLink= this.page.getByRole("link", { name: "New Article" });
-        this.singInLink=this.page.getByRole("link", { name: "Sign in" })
+        this.signInLink=this.page.getByRole("link", { name: "Sign in" })
     }
 
     async clickSettingLink(){
