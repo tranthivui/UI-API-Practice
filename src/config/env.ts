@@ -24,3 +24,7 @@ export const CONDUIT_ENV = {
     emailPrefix: requireEnv("CONDUIT_EMAIL_PREFIX"),
     password: requireEnv("CONDUIT_PASSWORD"),
 }
+
+export const INTERNET_URL={
+    url: requireEnv("INTERNET_URL")
+}

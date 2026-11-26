@@ -1,7 +1,6 @@
 import { test, expect } from "../../src/fixtures";
 import { ApiMessageResponse } from "../../src/types/response";
 import { DetailUser, UserDetailRes } from "../../src/types/NewUser";
-import { AccountApi } from "../../src/api/AccountApi";
 
 test.describe("Verify API account", () => {
     const data = {

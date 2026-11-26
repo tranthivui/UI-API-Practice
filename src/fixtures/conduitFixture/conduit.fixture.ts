@@ -230,7 +230,6 @@ export const test = base.extend<TestFixture, WorkerFixtures>({
     followedAuthor: async ({ otherApi, workerUser }, use) => {
         const followRes = await otherApi.followAuthor(workerUser.username);
         if (!followRes.ok()) throw new Error(`Follow failed: ${followRes.status()} ${await followRes.text()}`);
-        const followResData: FollowResData = await followRes.json();
         await use(workerUser.username);
         const unfollowRes = await otherApi.unFollowAuthor(workerUser.username);
         expect(unfollowRes.status()).toBe(200);
