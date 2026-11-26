@@ -16,7 +16,7 @@ test.describe("Verify login UI", () => {
       await loginPage.page.waitForURL("/");
       await expect(homePage.loggedInUser).toHaveText(`Logged in as ${ENV.userName}`);
       await expect(homePage.logoutLink).toBeVisible();
-      await expect(loginPage.loginForm).not.toBeVisible();
+      await expect(loginPage.loginForm).toBeHidden();
     });
   })
 
@@ -28,7 +28,7 @@ test.describe("Verify login UI", () => {
     await test.step("Verify login fail", async () => {
       await expect(loginPage.errorMess).toHaveText(data.incorrectPassMess);
       await expect(loginPage.page).toHaveURL(loginPage.url);
-      await expect(homePage.loggedInUser).not.toBeVisible();
+      await expect(homePage.loggedInUser).toBeHidden();
     });
   });
   test("AE01-03: Log out success",{tag: "@ui"}, async ({ loginPage, homePage }) => {
@@ -45,7 +45,7 @@ test.describe("Verify login UI", () => {
     });
     await test.step("Verify logout success", async () => {
       await expect(loginPage.page).toHaveURL(loginPage.url);
-      await expect(homePage.loggedInUser).not.toBeVisible();
+      await expect(homePage.loggedInUser).toBeHidden();
     });
   });
 })

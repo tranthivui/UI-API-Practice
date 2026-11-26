@@ -8,7 +8,10 @@
     "test:smoke": "npx playwright test --grep @smoke",
     "test:api": "npx playwright test --grep @api",
     "test:ui": "npx playwright test --grep @ui",
-    "test:conduit": "npx playwright test --project=conduit --workers=2"
+    "test:conduit": "npx playwright test --project=conduit --workers=2",
+    "test:internet": "npx playwright test --project=internet",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +21,9 @@
     "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.6",
     "dotenv": "^18.0.10",
-    "typescript": "^7.0.2"
+    "eslint": "^10.15.0",
+    "eslint-plugin-playwright": "^2.12.2",
+    "typescript": "~6.0.0",
+    "typescript-eslint": "^8.73.0"
   }
 }

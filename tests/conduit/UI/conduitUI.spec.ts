@@ -1,4 +1,3 @@
-import { Page } from "@playwright/test";
 import { CONDUIT_GET_USER_API } from "../../../src/config/conduitPaths/paths";
 import { CONDUIT_ENV } from "../../../src/config/env";
 import { buildArticle } from "../../../src/data/conduitData/articleFactory";
@@ -10,13 +9,13 @@ import { ArticleDataRes, ArticlesListRes, UserResponse } from "../../../src/type
 import { getToken } from "../../helpers/getToken.helper";
 
 test.describe("Verify UI", () => {
-    test("AE06-UI-01: Verify profile page have article created by API", { tag: ["@ui", "@smoke"] }, async ({ article, workerUser, profilePage }) => {
+    test("AE06-UI-01: Verify profile page have article created by API", {tag:["@ui", "@smoke"]}, async ({ article, workerUser, profilePage }) => {
         await expect(profilePage.headingName).toHaveText(workerUser.username);
         await expect(profilePage.getArticle(article.data.title)).toBeVisible();
         await expect(profilePage.getAuthor(article.data.title)).toHaveText(workerUser.username);
     })
 
-    test("AE06-UI-02: Create Article by Form and verify with API ", { tag: ["@ui"] }, async ({ authApi, editorPage, createdSlugs, loggedInPage }) => {
+    test("AE06-UI-02: Create Article by Form and verify with API", {tag:["@ui"]}, async ({ authApi, editorPage, createdSlugs }) => {
         await editorPage.goto();
         const newArticle = buildArticle();
         await editorPage.writeArticle(newArticle);
@@ -83,10 +82,10 @@ test.describe("Verify UI", () => {
         await articlePageW.reloadPage();
         await expect(articlePageW.getHeaderTitle(article.data.title)).toBeVisible();
         const commentLocator = articlePageW.getComment(commentDetail, otherUser.username);
-        await expect(commentLocator).not.toBeVisible();
+        await expect(commentLocator).toBeHidden();
     })
 
-    test("AE07-UI-02: B like for article of A", { tag: ["@ui", "@api"] }, async ({ article, otherApi, otherPage, authApi, followedAuthor }) => {
+    test("AE07-UI-02: B like for article of A", { tag: ["@ui", "@api"] }, async ({ article, otherApi, otherPage, authApi }) => {
         const getArticleRes = await authApi.getArticle(article.slug);
         expect(getArticleRes.status()).toBe(200);
         const getArticleResData: ArticleDataRes = await getArticleRes.json();

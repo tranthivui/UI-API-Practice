@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { ProductApi } from "../../src/api/ProductApi";
-import { Product, ProductDetailRes } from "../../src/types/Product";
+import { ProductDetailRes } from "../../src/types/Product";
 import { SearchProductRes } from "../../src/types/response";
 
 export async function getSearchResult(productApi: ProductApi, keyword: string): Promise<ProductDetailRes[]> {

@@ -6,6 +6,7 @@ import { message } from '../../src/data/message';
 
 test.describe("Verify search", () => {
   for (const keyword of searchKeyWords.found) {
+    // eslint-disable-next-line playwright/valid-test-tags -- tag
     test(`AE04-01: Search API: ${keyword.searchText}`,{tag: keyword.smoke? ["@api","@smoke"]:"@api"}, async ({ productApi }) => {
       const products = await getSearchResult(productApi, keyword.searchText);
       expect(products.length, `No product found for ${keyword.searchText}`).toBeGreaterThan(0);

@@ -1544,3 +1544,114 @@ Ví dụ khác: test dương (đăng ký thành công) có assertion khác hoàn
 ## NOTE storage
 - newContext → false: mỗi user có localStorage riêng.
 - Dùng chung context → true: 2 tab chung token, navbar B vẫn hiện tên B nhưng request tiếp theo sẽ chạy bằng token A, test vẫn pass nên lỗi bị che.
+
+# AE08 - INTERNET
+## 1. Upload
+- Locator: page.getByRole("link",{name:"File upload"})
+- Url: https://the-internet.herokuapp.com/upload
+- Upload screen
+  - Title: File Uploader, locator=page.getByRole("heading",{name:"File Uploader",level:3})
+  - Button choose file: locator=page.locator("#file-upload")
+  - Button upload: locator=page.getByRole("button",{name:"Upload"}) 
+  - Drag and drop: locator=page.locator("drag-drop-upload")
+  - Sau khi chọn file -> Tên file get value của button choose file(Tab Accessibility -> Value=ten_file)
+  - Tất cả locator không bị ẩn
+  - Vùng drag-drop 
+    - Không dùng được: Kéo file vào vùng drag-drop -> Upload báo server error
+    - Khi click vào vùng drag-drop thì hiển thị popup chọn file giống với khi click button choose file
+  - Sau khi upload xong
+    - Title: File uploaded!; locatorpage.getByRole("heading",{name:"File Uploaded!",level:3});
+    - Tên file: locator=page.locator("#uploaded-files")
+
+# 2.Download
+- Locator: page.getByRole("link",{name:"File Download"})
+- Url: https://the-internet.herokuapp.com/download
+- Download screen
+  - Có hiển thị file đã upload ở bước upload
+  - Locator: locator=page.getByRole("link",{name:${ten_file}}) 
+  - Click vào download file và vẫn giữ nguyên url
+
+## 3. Dialog
+- Locator: page.getByRole("link",{name:"Native Dialog"})
+- Url: https://the-internet.herokuapp.com/dialog
+- Dialog screen
+  - Title: Native Dialog, locator=page.getByRole("Native Dialog",{name:"File Uploader",level:3})
+  - Button
+    - Open modal dailog:
+      - Locator=page.getByRole("button",{name:"Open modal dialog"}) 
+      - Click
+        - Open dialog: locator=page.locator("#modal-dialog")
+        - Textbox Your name: locator=this.dialog.getByRole("textbox",{name:"Your name"})
+        - Button Confirm: locator=this.dialog.getByRole("button",{name:"Confirm"})
+        - Button Cancel: locator=this.dialog.getByRole("button",{name:"Cancel"})
+        - Sau khi click confirm
+          - thẻ p: locator=page.locator("#result") have text=`Modal dialog closed with: confirm (name: ${your-name}$)`
+        - Sau khi click cancel
+          - Không input name: locator=page.locator("#result") have text=`Modal dialog closed with: cancel`
+          - Nếu input name->cancel: locator=page.locator("#result") have text=`Modal dialog closed with: cancel (name: ${your-name}$)`
+    - Open non-model dialog
+      - Locator=page.getByRole("button",{name:"Open modal dialog"}) 
+      - Sau khi click show dialog
+        - locator=locator=page.locator("#non-modal-dialog")
+        - Dialog có button close; locator=locator=this.dialog.getByRole("button",{name:"Close"})
+        - Thẻ p hiển thị thông báo: locator=page.locator("#result") have text=`Non-modal dialog is open`
+        - Sau khi close dialog -> thẻ p hiển thị: locator=page.locator("#result") have text=`Non-modal dialog closed`
+
+## 4. Cửa sổ mới
+- Locator=page.getByRole("link",{name:"Multiple Windows"})
+- Url: https://the-internet.herokuapp.com/windows
+- Screen
+  - Title: Opening a new window, locator=page.getByRole("heading",{name:"Opening a new window",leve:3})
+  - link: page.getByRole("link",{name:"Click here"})
+  - Sau khi click link
+    - Open new window
+    - Url: https://the-internet.herokuapp.com/windows/new
+    - Title: locator=page.getByRole("heading",{name:"New Window",leve:3})
+
+## 5: iframe lồng
+- Locator=page.getByRole("link",{name:"Frames"})
+- Url: https://the-internet.herokuapp.com/frames
+- Screen
+  - link Nested Frames: locator=page.getByRole("link",{name:"Nested Frames"})
+  - link iFrame: locator=page.getByRole("link",{name:"iFrame"})
+    - Click nested frames
+      - URL: https://the-internet.herokuapp.com/nested_frames
+      - Frame top: locator=page.frameLocator('frame[name="frame-top"]');
+        - Frame left: text=LEFT, locator=page.frameLocator('frame[name="frame-left"]');
+        - Frame middle: text=MIDDLE, locator=page.frameLocator('frame[name="frame-middle"]');
+        - Frame right: text=RIGHT, locator=page.frameLocator('frame[name="frame-right"]');
+      - Frame bottom: text=BUTTOM, locator=page.frameLocator('frame[name="frame-bottom"]');
+## 6. Dynamic loading
+- Locator=page.getByRole("link",{name:"Dynamic Loading"})
+- Url: https://the-internet.herokuapp.com/dynamic_loading
+- Screen
+  - Example 1:
+    - Url: https://the-internet.herokuapp.com/dynamic_loading/1
+    - Locator=page.getByRole("link",{name:"Example 1: Element on page that is hidden"})
+    - Heading: locator=page.getByRole("heading",{name:"Dynamically Loaded Page Elements",leve:3}) -> text='Dynamically Loaded Page Elements'
+    - Button start=page.getByRole("button",{name:"Start"})
+    - Click button start -> hiển thị text='Hello World!' -> locator=age.getByRole("heading",{name:"Hello World!",leve:4}) -> Mất khoảng 31s để hiển thị text
+  - Example 2:
+    - Url: https://the-internet.herokuapp.com/dynamic_loading/2
+    - Locator=page.getByRole("link",{name:"Example 2: Element rendered after the fact"})
+    - Heading: locator=page.getByRole("heading",{name:"Dynamically Loaded Page Elements",leve:3}) -> text='Dynamically Loaded Page Elements'
+    - Button start=page.getByRole("button",{name:"Start"})
+    - Click button start -> hiển thị text='Hello World!' -> locator=age.getByRole("heading",{name:"Hello World!",leve:4}) -> Mất khoảng 54s để hiển thị text
+
+## 7. Hover
+- Locator=page.getByRole("link",{name:"Hovers"})
+- Url: https://the-internet.herokuapp.com/hovers
+- Trước khi hover
+  - Text=name: user1 có trong DOM
+  - div class=figcaption -> display=none
+- Sau khi hover
+  - Hiển thị text=name: user1 -> locator=page.getByRole("heading",{name:"name: user1",leve:5}) 
+  - Link view profile, locator=locator=page.getByRole("link",{name:"View profile"}) 
+  div class=figcaption -> display=block
+
+## 8. Basic Auth
+- Locator=page.getByRole("link",{name:"Basic Auth"})
+- User/pass: admin -> text lấy từ locator trên, Basic Auth (user and pass: admin)
+- Sau khi click link -> Hiển thị popup nhập username, pass
+  - Url: https://the-internet.herokuapp.com/basic_auth
+  - Heading=Basic Auth, locator=page.getByRole("heading",{name:"name: Basic Auth",leve:3}) 

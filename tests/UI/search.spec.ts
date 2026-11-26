@@ -4,6 +4,7 @@ import { getSearchResult } from "../helpers/search.helper";
 
 test.describe("Verify search result from UI with API", () => {
     for (const keyword of searchKeyWords.found) {
+        // eslint-disable-next-line playwright/valid-test-tags -- tag
         test(`AE04-UI-01: search UI "${keyword.searchText}" matches API`,{tag: keyword.smoke? ["@ui","@smoke"]:"@ui"}, async ({ productApi, productPage }) => {
             const productFromApi = await getSearchResult(productApi, keyword.searchText);
             await productPage.goto();
@@ -17,7 +18,7 @@ test.describe("Verify search result from UI with API", () => {
 
     test("AE04-UI-NEG-01: Not have result",{tag: "@ui"}, async ({ productApi, productPage }) => {
         const productFromApi = await getSearchResult(productApi, searchKeyWords.notFound);
-        expect(productFromApi.length).toBe(0);
+        expect(productFromApi).toHaveLength(0);
         await productPage.goto();
         await productPage.search(searchKeyWords.notFound);
         await expect(productPage.searchTitle).toBeVisible();

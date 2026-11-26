@@ -1,4 +1,4 @@
-import { Product, ProductDetailRes } from "./Product";
+import { ProductDetailRes } from "./Product";
 
 export type ApiMessageResponse={
     responseCode: number;
